@@ -1,6 +1,5 @@
 Package: strucchange
 Version: 1.5-1
-Date: 2015-06-06
 Title: Testing, Monitoring, and Dating Structural Changes
 Authors@R: c(person(given = "Achim", family = "Zeileis", role = c("aut", "cre"), email = "Achim.Zeileis@R-project.org"),
              person(given = "Friedrich", family = "Leisch", role = "aut", email = "Friedrich.Leisch@R-project.org"),
@@ -9,29 +8,42 @@ Authors@R: c(person(given = "Achim", family = "Zeileis", role = c("aut", "cre"),
 	     person(given = "Bruce", family = "Hansen", role = "ctb"),
 	     person(give = c("Edgar", "C."), family = "Merkle", role = "ctb"))
 Description: Testing, monitoring and dating structural changes in (linear)
-             regression models. strucchange features tests/methods from
-	     the generalized fluctuation test framework as well as from
-	     the F test (Chow test) framework. This includes methods to
-	     fit, plot and test fluctuation processes (e.g., CUSUM, MOSUM,
-	     recursive/moving estimates) and F statistics, respectively.
-             It is possible to monitor incoming data online using
-             fluctuation processes.
-             Finally, the breakpoints in regression models with structural
-             changes can be estimated together with confidence intervals.
-             Emphasis is always given to methods for visualizing the data.
+    regression models. strucchange features tests/methods from
+    the generalized fluctuation test framework as well as from
+    the F test (Chow test) framework. This includes methods to
+    fit, plot and test fluctuation processes (e.g., CUSUM, MOSUM,
+    recursive/moving estimates) and F statistics, respectively.
+    It is possible to monitor incoming data online using
+    fluctuation processes.
+    Finally, the breakpoints in regression models with structural
+    changes can be estimated together with confidence intervals.
+    Emphasis is always given to methods for visualizing the data.
 LazyData: yes
-Depends: R (>= 2.10.0), zoo, sandwich
-Suggests: stats4, car, dynlm, e1071, foreach, lmtest, mvtnorm, tseries
-Imports: graphics, stats
-License: GPL-2 | GPL-3
-NeedsCompilation: no
-Packaged: 2015-06-06 10:01:15 UTC; zeileis
+LinkingTo: Rcpp, RcppArmadillo
+Depends:
+    R (>= 2.10.0),
+    zoo,
+    sandwich
+Suggests:
+    stats4,
+    car,
+    dynlm,
+    e1071,
+    foreach,
+    lmtest,
+    mvtnorm,
+    tseries
+Imports:
+    graphics,
+    stats,
+    Rcpp (>= 0.12.7)
+License: GPL-2 | GPL-3 + file LICENSE
+URL: https://github.com/appelmar/strucchange/
 Author: Achim Zeileis [aut, cre],
-  Friedrich Leisch [aut],
-  Kurt Hornik [aut],
-  Christian Kleiber [aut],
-  Bruce Hansen [ctb],
-  Edgar C. Merkle [ctb]
+    Friedrich Leisch [aut],
+    Kurt Hornik [aut],
+    Christian Kleiber [aut],
+    Bruce Hansen [ctb],
+    Edgar C. Merkle [ctb]
 Maintainer: Achim Zeileis <Achim.Zeileis@R-project.org>
-Repository: CRAN
-Date/Publication: 2015-06-06 13:03:15
+

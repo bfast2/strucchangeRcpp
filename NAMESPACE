@@ -1,5 +1,7 @@
 import("stats", "graphics", "zoo", "sandwich")
-
+useDynLib(strucchange)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
 export(
 ## testing
   "efp",
@@ -39,6 +41,8 @@ export(
   "recresid",
 
 ## utilities
+  ".Xinv0",
+  ".coef0",
   "recresid.default",
   "simulateBMDist",
   "root.matrix",
