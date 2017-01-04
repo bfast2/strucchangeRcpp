@@ -15,7 +15,7 @@ using namespace Rcpp;
 //' @param tol tolerance in the computation of recursive model coefficients
 //' @return vector containing the recursive residuals 
 //' @seealso \code{\link{recresid}} and \code{\link{recresid.default}}
-// [[Rcpp::export]]
+// [[Rcpp::export(name = ".sc_cpp_recresid")]]
 NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol) {
   
   if(!(start > X.n_cols && start <= X.n_rows)) stop("Invalid start");

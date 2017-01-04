@@ -1,6 +1,7 @@
 \name{breakpoints}
 \alias{breakpoints}
 \alias{breakpoints.formula}
+\alias{breakpoints.matrix}
 \alias{breakpoints.breakpointsfull}
 \alias{breakpoints.Fstats}
 \alias{summary.breakpoints}
@@ -26,6 +27,8 @@
 \usage{
 \method{breakpoints}{formula}(formula, h = 0.15, breaks = NULL,
     data = list(), hpc = c("none", "foreach"), \dots)
+\method{breakpoints}{matrix}(X,y, h = 0.15, breaks = NULL, 
+    hpc = c("none", "foreach"), \dots)
 \method{breakpoints}{breakpointsfull}(obj, breaks = NULL, \dots)
 \method{summary}{breakpointsfull}(object, breaks = NULL, sort = TRUE,
     format.times = NULL, \dots)
@@ -41,6 +44,8 @@
 \arguments{
   \item{formula}{a symbolic description for the model in which breakpoints
     will be estimated.}
+  \item{X}{regression matrix.}
+  \item{y}{response vector.}
   \item{h}{minimal segment size either given as fraction relative to the
     sample size or as an integer giving the minimal number of observations
     in each segment.}
@@ -210,7 +215,7 @@ Bai J., Perron P. (1998), Estimating and Testing Linear Models With Multiple Str
 Bai J., Perron P. (2003), Computation and Analysis of Multiple Structural Change
   Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22.
 
-Zeileis A., Kleiber C., Krämer W., Hornik K. (2003), Testing and Dating of
+Zeileis A., Kleiber C., Kr?mer W., Hornik K. (2003), Testing and Dating of
   Structural Changes in Practice, \emph{Computational Statistics and Data Analysis},
   \bold{44}, 109-123. doi:10.1016/S0167-9473(03)00030-6.
 

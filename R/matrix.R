@@ -1,15 +1,26 @@
 root.matrix <- function(X)
 {
-    if((ncol(X)==1)&&(nrow(X)==1)) return(sqrt(X))
-    else
-    {
-        X.eigen <- eigen(X, symmetric=TRUE)
-        if(any(X.eigen$values < 0)) stop("matrix is not positive semidefinite")
-        sqomega <- sqrt(diag(X.eigen$values))
-        V <- X.eigen$vectors
-        return(V %*% sqomega %*% t(V))
-    }
+  if((ncol(X)==1)&&(nrow(X)==1)) return(sqrt(X))
+  if (getOption("strucchange.use_armadillo", FALSE))
+    return(.sc_cpp_rootmatrix(X))
+  
+  X.eigen <- eigen(X, symmetric=TRUE)
+  if(any(X.eigen$values < 0)) stop("matrix is not positive semidefinite")
+  sqomega <- sqrt(diag(X.eigen$values))
+  V <- X.eigen$vectors
+  return(V %*% sqomega %*% t(V))
 }
+
+root.matrix.crossprod <- function(X)
+{
+  if (!getOption("strucchange.use_armadillo", FALSE))
+    return(root.matrix(crossprod(X)))
+  if ("matrix" %in% class(X)) {
+    return(.sc_cpp_rootmatrix_cross(X))
+  }
+  return(.sc_cpp_rootmatrix_cross(as.matrix(X)))
+}
+
 
 solveCrossprod <- function(X, method = c("qr", "chol", "solve")) {
   switch(match.arg(method),

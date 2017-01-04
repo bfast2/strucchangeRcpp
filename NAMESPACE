@@ -78,6 +78,7 @@ S3method("boundary", "Fstats")
 S3method("boundary", "mefp")
 
 S3method("breakpoints", "formula")
+S3method("breakpoints", "matrix")
 S3method("breakpoints", "breakpointsfull")
 S3method("breakpoints", "Fstats")
 
@@ -86,6 +87,10 @@ S3method("breakdates", "confint.breakpoints")
 
 S3method("mefp", "formula")
 S3method("mefp", "efp")
+S3method("mefp", "matrix")
+
+S3method("efp", "matrix")
+S3method("efp", "formula")
 
 S3method("recresid", "formula")
 S3method("recresid", "lm")

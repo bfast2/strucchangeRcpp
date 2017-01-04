@@ -1,5 +1,7 @@
 \name{efp}
 \alias{efp}
+\alias{efp.formula}
+\alias{efp.matrix}
 \alias{print.efp}
 \encoding{latin1}
 \title{Empirical Fluctuation Processes}
@@ -9,10 +11,16 @@ framework, which includes CUSUM and MOSUM tests based on recursive
 or OLS residuals, parameter estimates or ML scores (OLS first order
 conditions).}
 \usage{
-efp(formula, data, type = , h = 0.15,
-    dynamic = FALSE, rescale = TRUE)}
+\method{efp}{formula}(formula, data, type = , h = 0.15,
+    dynamic = FALSE, rescale = TRUE, \dots)
+\method{efp}{matrix}(X, y, type = , h = 0.15,
+    dynamic = FALSE, rescale = TRUE, \dots)   
+}
+
 \arguments{
-  \item{formula}{a symbolic description for the model to be tested.}
+  \item{X, y, formula}{specification of the linear regression model:
+    either by a regressor matrix \code{X} and a response variable \code{y},
+    or by a \code{formula}.}
   \item{data}{an optional data frame containing the variables in the model. By
      default the variables are taken from the environment which \code{efp} is
      called from.}
@@ -27,6 +35,7 @@ efp(formula, data, type = , h = 0.15,
     the regressor matrix of the corresponding subsample according to Kuan & Chen
     (1994); if \code{FALSE} the whole regressor matrix will be used.
     (only if \code{type} is either \code{"RE"} or \code{"ME"})}
+  \item{\dots}{Currently not used.}
 }
 
 \details{If \code{type} is one of \code{"Rec-CUSUM"}, \code{"OLS-CUSUM"},
@@ -90,7 +99,7 @@ Hansen B. (1992), Testing for Parameter Instability in Linear Models,
 Hjort N.L., Koning A. (2002), Tests for Constancy of Model Parameters
 Over Time, \emph{Nonparametric Statistics}, \bold{14}, 113-132.
 
-Krämer W., Ploberger W., Alt R. (1988), Testing for structural change in
+Kr?mer W., Ploberger W., Alt R. (1988), Testing for structural change in
 dynamic models, \emph{Econometrica}, \bold{56}, 1355-1369.
 
 Kuan C.-M., Hornik K. (1995), The generalized fluctuation test: A
@@ -100,7 +109,7 @@ Kuan C.-M., Chen (1994), Implementing the fluctuation and moving estimates
 tests in dynamic econometric models, \emph{Economics Letters}, \bold{44},
 235-239.
 
-Ploberger W., Krämer W. (1992), The CUSUM test with OLS residuals,
+Ploberger W., Kr?mer W. (1992), The CUSUM test with OLS residuals,
 \emph{Econometrica}, \bold{60}, 271-285.
 
 Zeileis A., Leisch F., Hornik K., Kleiber C. (2002), \code{strucchange}:

@@ -6,6 +6,33 @@
 
 using namespace Rcpp;
 
+// sc_cpp_efp_process_me
+List sc_cpp_efp_process_me(const arma::mat& X, const arma::vec& y, bool rescale, double h);
+RcppExport SEXP strucchange_sc_cpp_efp_process_me(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< bool >::type rescale(rescaleSEXP);
+    Rcpp::traits::input_parameter< double >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_efp_process_me(X, y, rescale, h));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sc_cpp_efp_process_re
+List sc_cpp_efp_process_re(const arma::mat& X, const arma::vec& y, bool rescale);
+RcppExport SEXP strucchange_sc_cpp_efp_process_re(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< bool >::type rescale(rescaleSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_efp_process_re(X, y, rescale));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sc_cpp_recresid
 NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y, unsigned int start, unsigned int end, const double& tol);
 RcppExport SEXP strucchange_sc_cpp_recresid(SEXP XSEXP, SEXP ySEXP, SEXP startSEXP, SEXP endSEXP, SEXP tolSEXP) {
@@ -18,6 +45,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< unsigned int >::type end(endSEXP);
     Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
     rcpp_result_gen = Rcpp::wrap(sc_cpp_recresid(X, y, start, end, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sc_cpp_rootmatrix
+arma::mat sc_cpp_rootmatrix(const arma::mat& X);
+RcppExport SEXP strucchange_sc_cpp_rootmatrix(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_rootmatrix(X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sc_cpp_rootmatrix_cross
+arma::mat sc_cpp_rootmatrix_cross(const arma::mat& X);
+RcppExport SEXP strucchange_sc_cpp_rootmatrix_cross(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_rootmatrix_cross(X));
     return rcpp_result_gen;
 END_RCPP
 }

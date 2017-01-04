@@ -1,3 +1,16 @@
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+  op.strucchange <- list(
+    strucchange.use_armadillo = FALSE
+  )
+  toset <- !(names(op.strucchange) %in% names(op))
+  if(any(toset)) options(op.strucchange[toset])
+  
+  invisible()
+}
+
+
+
 ## standard double maximum functional
 
 maxBB <- efpFunctional(lim.process = "Brownian bridge",

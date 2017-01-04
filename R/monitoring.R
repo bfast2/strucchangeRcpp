@@ -1,4 +1,6 @@
-mefp <- function(obj, ...) UseMethod("mefp")
+mefp <- function(X, ...) {
+  UseMethod("mefp")
+}
 
 mefp.formula <-
     function(formula, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME", "fluctuation"),
@@ -34,6 +36,55 @@ mefp.formula <-
     val$call <- val$initcall <- match.call()
     return(val)
 }
+
+
+
+
+
+
+mefp.matrix <-
+  function(X,y, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME", "fluctuation"),
+           h=1, alpha=0.05, functional = c("max", "range"),
+           period=10, tolerance=.Machine$double.eps^0.5,
+           CritvalTable=NULL, rescale=NULL, border=NULL, ...)
+  {
+    type <- match.arg(type)
+    if(type == "fluctuation") type <- "RE"
+    functional <- match.arg(functional)
+    
+    histrescale <- rescale
+    if(type=="RE") histrescale <- TRUE
+    if(is.null(rescale)) {
+      if(type=="RE") {
+        rescale <- FALSE
+        histrescale <- TRUE
+      }
+      else {
+        rescale <- TRUE
+        histrescale <- TRUE
+      }
+    }
+    
+    val <- efp.matrix(X,y, type=type, h=h, rescale=histrescale)
+    val <- mefp.efp(val, alpha=alpha, functional=functional, period=period,
+                    tolerance=tolerance, CritvalTable=CritvalTable,
+                    rescale=rescale, border=border, ...)
+    #if(length(data) == 0)
+    val$data <- NULL
+    # else
+    #    val$data <- deparse(substitute(data))
+    val$call <- val$initcall <- match.call()
+    return(val)
+  }
+
+
+
+
+
+
+
+
+
 
 mefp.efp <-
     function(obj, alpha=0.05, functional = c("max", "range"),
@@ -158,7 +209,7 @@ mefp.efp <-
             retval <- list(coef=NULL, Qr12=NULL)
             retval$coef <- coef(lm.fit(x[ok,,drop=FALSE], y[ok,,drop=FALSE]))
             if(rescale)
-                retval$Qr12 <- root.matrix(crossprod(x[ok,,drop=FALSE]))/sqrt(K)
+                retval$Qr12 <- root.matrix.crossprod(x[ok,,drop=FALSE])/sqrt(K)
             retval
         }
 
@@ -207,7 +258,7 @@ mefp.efp <-
             retval <- list(coef=NULL, Qr12=NULL)
             retval$coef <- coef(lm.fit(x[1:k,,drop=FALSE], y[1:k,,drop=FALSE]))
             if(rescale)
-                retval$Qr12 <- root.matrix(crossprod(x[1:k,,drop=FALSE]))/sqrt(k)
+                retval$Qr12 <- root.matrix.crossprod(x[1:k,,drop=FALSE])/sqrt(k)
             retval
         }
 
@@ -256,9 +307,9 @@ mefp.efp <-
     obj
 }
 
-monitor <- function(obj, data=NULL, verbose=TRUE){
 
-    if(!is.na(obj$breakpoint)) return(TRUE)
+
+monitor <- function(obj, data=NULL, verbose=TRUE){
     if(missing(data)){
         if(is.null(obj$data)){
             data <- list()
@@ -267,59 +318,71 @@ monitor <- function(obj, data=NULL, verbose=TRUE){
             data <- get(obj$data)
         }
     }
-
+  
     mf <- model.frame(obj$formula, data=data)
     y <- as.matrix(model.response(mf))
     modelterms <- terms(obj$formula, data = data)
-    x <- model.matrix(modelterms, data = data)
+    X <- model.matrix(modelterms, data = data)
 
-    if(nrow(x) <= obj$last) return(obj)
-    if(nrow(x)!=nrow(y))
-        stop("response and regressors must have the same number of rows")
-    if(ncol(y)!=1)
-        stop("multivariate response not implemented yet")
-    foundBreak <- FALSE
+    return(monitor.matrix(obj = obj, X=X,y = y, verbose = verbose))
+}
 
-    if((obj$type == "OLS-MOSUM") | (obj$type == "OLS-CUSUM"))
+
+
+
+monitor.matrix <- function(obj, X, y, verbose=TRUE){
+  
+  if(!is.na(obj$breakpoint)) return(TRUE)
+  
+  
+  if(nrow(X) <= obj$last) return(obj)
+  if(nrow(X)!=nrow(y))
+    stop("response and regressors must have the same number of rows")
+  if(ncol(y)!=1)
+    stop("multivariate response not implemented yet")
+  foundBreak <- FALSE
+  
+  if((obj$type == "OLS-MOSUM") | (obj$type == "OLS-CUSUM"))
+  {
+    if(obj$type == "OLS-CUSUM")
     {
-      if(obj$type == "OLS-CUSUM")
-      {
-        obj$process <- obj$computeEmpProc(x,y)[-(1:obj$histsize)]
-      }
-      else
-      {
-        obj$process <- obj$computeEmpProc(x,y)[-(1:length(obj$efpprocess))]
-      }
-      boundary <- obj$border((obj$histsize+1):nrow(x))
-      obj$statistic <- max(abs(obj$process))
-      if(!foundBreak & any(abs(obj$process) > boundary))
-      {
-        foundBreak <- TRUE
-        obj$breakpoint <- min(which(abs(obj$process) > boundary)) + obj$histsize
-        if(verbose) cat("Break detected at observation #", obj$breakpoint, "\n")
-      }
-      obj$lastcoef <- NULL
+      obj$process <- obj$computeEmpProc(X,y)[-(1:obj$histsize)]
     }
     else
     {
-      for(k in (obj$last+1):nrow(x)){
-          newestims <- obj$computeEstims(x,y,k)
-          obj$process <- rbind(obj$process,
-                               obj$computeEmpProc(newestims$coef, newestims$Qr12,k))
-          stat <- obj$computeStat(obj$process)
-          obj$statistic <- c(obj$statistic, stat)
-          if(!foundBreak & (stat > obj$border(k))){
-              foundBreak <- TRUE
-              obj$breakpoint <- k
-              if(verbose) cat("Break detected at observation #", k, "\n")
-          }
-      }
-      obj$lastcoef <- newestims$coef
+      obj$process <- obj$computeEmpProc(X,y)[-(1:length(obj$efpprocess))]
     }
-    obj$last <- nrow(x)
-    obj$call <- match.call()
-    obj
+    boundary <- obj$border((obj$histsize+1):nrow(X))
+    obj$statistic <- max(abs(obj$process))
+    if(!foundBreak & any(abs(obj$process) > boundary))
+    {
+      foundBreak <- TRUE
+      obj$breakpoint <- min(which(abs(obj$process) > boundary)) + obj$histsize
+      if(verbose) cat("Break detected at observation #", obj$breakpoint, "\n")
+    }
+    obj$lastcoef <- NULL
+  }
+  else
+  {
+    for(k in (obj$last+1):nrow(X)){
+      newestims <- obj$computeEstims(X,y,k)
+      obj$process <- rbind(obj$process,
+                           obj$computeEmpProc(newestims$coef, newestims$Qr12,k))
+      stat <- obj$computeStat(obj$process)
+      obj$statistic <- c(obj$statistic, stat)
+      if(!foundBreak & (stat > obj$border(k))){
+        foundBreak <- TRUE
+        obj$breakpoint <- k
+        if(verbose) cat("Break detected at observation #", k, "\n")
+      }
+    }
+    obj$lastcoef <- newestims$coef
+  }
+  obj$last <- nrow(X)
+  obj$call <- match.call()
+  obj
 }
+
 
 print.mefp <- function(x, ...){
 

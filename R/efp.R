@@ -1,335 +1,633 @@
-efp <- function(formula, data = list(),
+
+efp <- function(X, ...)
+{
+  UseMethod("efp")
+}
+
+efp.formula <- function(formula, data = list(),
                 type = c("Rec-CUSUM", "OLS-CUSUM", "Rec-MOSUM", "OLS-MOSUM",
                 "RE", "ME", "Score-CUSUM", "Score-MOSUM", "fluctuation"),
-                h = 0.15, dynamic = FALSE, rescale = TRUE)
+                h = 0.15, dynamic = FALSE, rescale = TRUE, ...)
 {
-    if(!inherits(formula, "formula")) {
-      X <- if(is.matrix(formula$x))
-             formula$x
-           else model.matrix(terms(formula), model.frame(formula))
-      y <- if(is.vector(formula$y))
-             formula$y
-           else model.response(model.frame(formula))
-    } else {
-      mf <- model.frame(formula, data = data)
-      y <- model.response(mf)
-      X <- model.matrix(formula, data = data)
-    }  
-   
-    n <- nrow(X)
-    if(dynamic)
-    {
-      Xnames <- colnames(X)
-      X <- cbind(y[1:(n-1)],X[2:n,])
-      colnames(X) <- c("lag", Xnames)
-      y <- y[-1]
-      n <- n-1
-    }
-    k <- ncol(X)
-    type <- match.arg(type)
-    if(type == "fluctuation") type <- "RE"
-
-    retval <- list(process = NULL,
-                   type = type,
-                   nreg = k,
-                   nobs = n,
-                   call = match.call(),
-                   formula = formula,
-                   par = NULL,
-                   type.name = NULL,
-                   lim.process = NULL,
-                   coef = NULL,
-                   Q12 = NULL,
-                   datatsp = NULL,
-		   rescale = rescale)
-
-    orig.y <- NULL
-
-    switch(type,
-
-           ## empirical process of Recursive CUSUM model
-
-           "Rec-CUSUM" = {
-               w <- recresid(X, y)
-               sigma <- sqrt(var(w))
-               process <- cumsum(c(0,w))/(sigma*sqrt(n-k))
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n))
-                   process <- ts(process, end = end(orig.y),
-                                 frequency = frequency(orig.y))
-               }
-               retval$type.name <- "Recursive CUSUM test"
-               retval$lim.process <- "Brownian motion"
-           },
-
-           ## empirical process of OLS-based CUSUM model
-
-           "OLS-CUSUM" = {
-               fm <- lm.fit(X,y)
-               e <- fm$residuals
-               sigma <- sqrt(sum(e^2)/fm$df.residual)
-               process <- cumsum(c(0,e))/(sigma*sqrt(n))
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n))
-                   process <- ts(process, end = end(orig.y),
-                                 frequency = frequency(orig.y))
-               }
-               retval$type.name <- "OLS-based CUSUM test"
-               retval$lim.process <- "Brownian bridge"
-           },
-
-           ## empirical process of Recursive MOSUM model
-
-           "Rec-MOSUM" = {
-               w <- recresid(X, y)
-               nw <- n - k
-               nh <- floor(nw*h)
-               process <- rep(0, (nw-nh))
-               for(i in 0:(nw-nh))
+  if(!inherits(formula, "formula")) {
+    X <- if(is.matrix(formula$x))
+      formula$x
+    else model.matrix(terms(formula), model.frame(formula))
+    y <- if(is.vector(formula$y))
+      formula$y
+    else model.response(model.frame(formula))
+  } else {
+    mf <- model.frame(formula, data = data)
+    y <- model.response(mf)
+    X <- model.matrix(formula, data = data)
+  }  
+  
+  n <- nrow(X)
+  if(dynamic)
+  {
+    Xnames <- colnames(X)
+    X <- cbind(y[1:(n-1)],X[2:n,])
+    colnames(X) <- c("lag", Xnames)
+    y <- y[-1]
+    n <- n-1
+  }
+  k <- ncol(X)
+  type <- match.arg(type)
+  if(type == "fluctuation") type <- "RE"
+  
+  retval <- list(process = NULL,
+                 type = type,
+                 nreg = k,
+                 nobs = n,
+                 call = match.call(),
+                 formula = formula,
+                 par = NULL,
+                 type.name = NULL,
+                 lim.process = NULL,
+                 coef = NULL,
+                 Q12 = NULL,
+                 datatsp = NULL,
+                 rescale = rescale)
+  
+  orig.y <- NULL
+  
+  switch(type,
+         
+         ## empirical process of Recursive CUSUM model
+         
+         "Rec-CUSUM" = {
+           w <- recresid(X, y)
+           sigma <- sqrt(var(w))
+           process <- cumsum(c(0,w))/(sigma*sqrt(n-k))
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n))
+               process <- ts(process, end = end(orig.y),
+                             frequency = frequency(orig.y))
+           }
+           retval$type.name <- "Recursive CUSUM test"
+           retval$lim.process <- "Brownian motion"
+         },
+         
+         ## empirical process of OLS-based CUSUM model
+         
+         "OLS-CUSUM" = {
+           fm <- lm.fit(X,y)
+           e <- fm$residuals
+           sigma <- sqrt(sum(e^2)/fm$df.residual)
+           process <- cumsum(c(0,e))/(sigma*sqrt(n))
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n))
+               process <- ts(process, end = end(orig.y),
+                             frequency = frequency(orig.y))
+           }
+           retval$type.name <- "OLS-based CUSUM test"
+           retval$lim.process <- "Brownian bridge"
+         },
+         
+         ## empirical process of Recursive MOSUM model
+         
+         "Rec-MOSUM" = {
+           w <- recresid(X, y)
+           nw <- n - k
+           nh <- floor(nw*h)
+           process <- rep(0, (nw-nh))
+           for(i in 0:(nw-nh))
+           {
+             process[i+1] <- sum(w[(i+1):(i+nh)])
+           }
+           sigma <- sqrt(var(w)*(nw-1)/(nw-k))
+           process <- process/(sigma*sqrt(nw))
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n)) {
+               process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
+                             frequency = frequency(orig.y))
+             } else {
+               process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
+                             frequency = n)
+             }
+           }
+           retval$par <- h
+           retval$type.name <- "Recursive MOSUM test"
+           retval$lim.process <- "Brownian motion increments"
+         },
+         
+         ## empirical process of OLS-based MOSUM model
+         
+         "OLS-MOSUM" = {
+           fm <- lm.fit(X,y)
+           e <- fm$residuals
+           sigma <- sqrt(sum(e^2)/fm$df.residual)
+           nh <- floor(n*h)
+           process <- cumsum(c(0,e))
+           process <- process[-(1:nh)] - process[1:(n-nh+1)]
+           process <- process/(sigma*sqrt(n))
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n)) {
+               process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
+                             frequency = frequency(orig.y))
+             } else {
+               process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
+                             frequency = n)
+             }
+           }
+           retval$par <- h
+           retval$type.name <- "OLS-based MOSUM test"
+           retval$lim.process <- "Brownian bridge increments"
+         },
+         
+         ## empirical process of recursive estimates fluctuation
+         
+         "RE" = {
+           if (getOption("strucchange.use_armadillo", FALSE)) {
+             p <- .sc_cpp_efp_process_re(X,y,rescale)
+             process <- p$process
+             Q12 <- p$Q12
+           }
+           else {
+             m.fit <- lm.fit(X,y)
+             beta.hat <- m.fit$coefficients
+             sigma <- sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
+             process <- matrix(rep(0,k*(n-k+1)), nrow=k)
+             Q12 <- root.matrix.crossprod(X)/sqrt(n)
+             
+             if(rescale)
+             {
+               for(i in k:(n-1))
                {
-                   process[i+1] <- sum(w[(i+1):(i+nh)])
+                 Qi12 <- root.matrix.crossprod(X[1:i,])/sqrt(i)
+                 process[,(i-k+1)] <- Qi12 %*%
+                   (lm.fit(as.matrix(X[1:i,]), y[1:i])$coefficients - beta.hat)
                }
-               sigma <- sqrt(var(w)*(nw-1)/(nw-k))
-               process <- process/(sigma*sqrt(nw))
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n)) {
-                   process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
-                                 frequency = frequency(orig.y))
-                 } else {
-                   process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
-                                 frequency = n)
-                 }
-	       }
-               retval$par <- h
-               retval$type.name <- "Recursive MOSUM test"
-               retval$lim.process <- "Brownian motion increments"
-           },
-
-           ## empirical process of OLS-based MOSUM model
-
-           "OLS-MOSUM" = {
-               fm <- lm.fit(X,y)
-               e <- fm$residuals
-               sigma <- sqrt(sum(e^2)/fm$df.residual)
-               nh <- floor(n*h)
-               process <- cumsum(c(0,e))
-               process <- process[-(1:nh)] - process[1:(n-nh+1)]
-	       process <- process/(sigma*sqrt(n))
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n)) {
-                   process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
-                                 frequency = frequency(orig.y))
-                 } else {
-                   process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
-                                 frequency = n)
-                 }
-	       }
-               retval$par <- h
-               retval$type.name <- "OLS-based MOSUM test"
-               retval$lim.process <- "Brownian bridge increments"
-           },
-
-           ## empirical process of recursive estimates fluctuation
-
-           "RE" = {
-               m.fit <- lm.fit(X,y)
-               beta.hat <- m.fit$coefficients
-               sigma <- sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
-               process <- matrix(rep(0,k*(n-k+1)), nrow=k)
-               Q12 <- root.matrix(crossprod(X))/sqrt(n)
-               if(rescale)
+             }
+             else
+             {
+               for(i in k:(n-1))
                {
-                   for(i in k:(n-1))
-                   {
-                       Qi12 <- root.matrix(crossprod(X[1:i,]))/sqrt(i)
-                       process[,(i-k+1)] <- Qi12 %*%
-                               (lm.fit(as.matrix(X[1:i,]), y[1:i])$coefficients - beta.hat)
-                   }
+                 process[,(i-k+1)] <- Q12 %*% (lm.fit(as.matrix(X[1:i,]),
+                                                      y[1:i])$coefficients - beta.hat)
                }
-               else
+             }
+             process <- t(cbind(0, process))*matrix(rep((k-1):n,k),
+                                                    ncol=k)/(sigma*sqrt(n))
+           }
+           colnames(process) <- colnames(X)
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n)) {
+               process <- ts(process, end = end(orig.y),
+                             frequency = frequency(orig.y))
+             }
+           }
+           retval$Q12 <- Q12
+           retval$type.name <- "RE test (recursive estimates test)"
+           retval$lim.process <- "Brownian bridge"
+         },
+         
+         ## empirical process of moving estimates fluctuation
+         
+         "ME" = {
+           nh <- floor(n*h)
+           if (getOption("strucchange.use_armadillo", FALSE)) {
+             p <- .sc_cpp_efp_process_me(X,y,rescale,h)
+             process <- p$process
+             Q12 <- p$Q12
+           }
+           else {
+             m.fit <- lm.fit(X,y)
+             beta.hat <- m.fit$coefficients
+             sigma <- sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
+             process <- matrix(rep(0,k*(n-nh+1)), nrow=k)
+             Q12 <- root.matrix.crossprod(X)/sqrt(n)
+             if(rescale)
+             {
+               for(i in 0:(n-nh))
                {
-                   for(i in k:(n-1))
-                   {
-                       process[,(i-k+1)] <- Q12 %*% (lm.fit(as.matrix(X[1:i,]),
-                                                           y[1:i])$coefficients - beta.hat)
-                   }
+                 Qnh12 <- root.matrix.crossprod(X[(i+1):(i+nh),])/sqrt(nh)
+                 process[, i+1] <-  Qnh12 %*% (lm.fit(
+                   as.matrix(X[(i+1):(i+nh),]), y[(i+1):(i+nh)])$coefficients - beta.hat)
                }
-               process <- t(cbind(0, process))*matrix(rep((k-1):n,k),
-                                                      ncol=k)/(sigma*sqrt(n))
-               colnames(process) <- colnames(X)
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n)) {
-                   process <- ts(process, end = end(orig.y),
-                                 frequency = frequency(orig.y))
-                 }
-	       }
-               retval$Q12 <- Q12
-               retval$type.name <- "RE test (recursive estimates test)"
-               retval$lim.process <- "Brownian bridge"
-           },
-
-           ## empirical process of moving estimates fluctuation
-
-           "ME" = {
-               m.fit <- lm.fit(X,y)
-               beta.hat <- m.fit$coefficients
-               sigma <- sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
-               nh <- floor(n*h)
-               process <- matrix(rep(0,k*(n-nh+1)), nrow=k)
-               Q12 <- root.matrix(crossprod(X))/sqrt(n)
-               if(rescale)
+             }
+             else
+             {
+               for(i in 0:(n-nh))
                {
-                   for(i in 0:(n-nh))
-                   {
-                       Qnh12 <- root.matrix(crossprod(X[(i+1):(i+nh),]))/sqrt(nh)
-                       process[, i+1] <-  Qnh12 %*% (lm.fit(
-                                             as.matrix(X[(i+1):(i+nh),]), y[(i+1):(i+nh)])$coefficients - beta.hat)
-                   }
+                 process[, i+1] <- Q12 %*% (lm.fit(as.matrix(X[(i+1):(i+nh),]),
+                                                   y[(i+1):(i+nh)])$coefficients - beta.hat)
                }
-               else
-               {
-                   for(i in 0:(n-nh))
-                   {
-                       process[, i+1] <- Q12 %*% (lm.fit(as.matrix(X[(i+1):(i+nh),]),
-		         y[(i+1):(i+nh)])$coefficients - beta.hat)
-                   }
-               }
-               process <- nh*t(process)/(sqrt(n)*sigma)
-               colnames(process) <- colnames(X)
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n)) {
-                   process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
-                                 frequency = frequency(orig.y))
-                 } else {
-                   process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
-                                 frequency = n)
-                 }
-	       }
-               retval$par <- h
-               retval$Q12 <- Q12
-               retval$type.name <- "ME test (moving estimates test)"
-               retval$lim.process <- "Brownian bridge increments"
-           },
-
-           "Score-CUSUM" = {
-               fm <- lm.fit(X,y)
-               e <- as.vector(fm$residuals)
-               sigma2 <- sum(e^2)/n
-	       k <- k + 1
-               ## Q12 <- sqrt(sigma2) * root.matrix(crossprod(X))/sqrt(n)
-               ## Q12 <- rbind(cbind(Q12, 0), 0)
-               ## Q12[k,k] <- sqrt(2)*sigma2
-
-	       process <- cbind(X * e, e^2 - sigma2)/sqrt(n)
-	       Q12 <- root.matrix(crossprod(process))
-	       process <- rbind(0, process)
-               process <- apply(process, 2, cumsum)
-               process <- t(chol2inv(chol(Q12)) %*% t(process))
-
-	       colnames(process) <- c(names(coef(fm)), "(Variance)")
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n)) {
-                   process <- ts(process, end = end(orig.y),
-                                 frequency = frequency(orig.y))
-                 }
-	       }
-               retval$type.name <- "Score-based CUSUM test"
-               retval$lim.process <- "Brownian bridge"
-               retval$Q12 <- Q12
-           },
-
-           "Score-MOSUM" = {
-               fm <- lm.fit(X,y)
-               e <- as.vector(fm$residuals)
-               sigma2 <- sum(e^2)/n
-	       k <- k + 1
-	       nh <- floor(n*h)
-               ## Q12 <- sqrt(sigma2) * root.matrix(crossprod(X))/sqrt(n)
-               ## Q12 <- rbind(cbind(Q12, 0), 0)
-               ## Q12[k,k] <- sqrt(2)*sigma2
-
-	       process <- cbind(X * e, e^2 - sigma2)/sqrt(n)
-	       Q12 <- root.matrix(crossprod(process))
-	       process <- rbind(0, process)
-               process <- apply(process, 2, cumsum)
-               process <- process[-(1:nh),] - process[1:(n-nh+1),]
-	       process <- t(chol2inv(chol(Q12)) %*% t(process))
-
-	       colnames(process) <- c(names(coef(fm)), "(Variance)")
-               if(is.ts(data)) {
-                   if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
-               } else {
-	         env <- environment(formula)
-                 if(missing(data)) data <- env
-                 orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
-                 if(is.ts(orig.y) && (NROW(orig.y) == n)) {
-                   process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
-                                 frequency = frequency(orig.y))
-                 } else {
-                   process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
-                                 frequency = n)
-                 }
-	       }
-               retval$par <- h
-               retval$type.name <- "Score-based MOSUM test"
-               retval$lim.process <- "Brownian bridge increments"
-               retval$Q12 <- Q12
-           })
-
-
-    if(!is.ts(process))
-        process <- ts(process, start = 0, frequency = (NROW(process)-1))
-
-    retval$process <- process
-
-    if(is.ts(data) & NROW(data) == n)
-        retval$datatsp <- tsp(data)
-    else if(!is.null(orig.y) && is.ts(orig.y) & NROW(orig.y) == n)
-        retval$datatsp <- tsp(orig.y)
-    else
-        retval$datatsp <- c(0, 1, n)
-
-    m.fit <- lm.fit(X,y)
-    retval$coefficients <- coefficients(m.fit)
-    retval$sigma <-  sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
-    class(retval) <- c("efp")
-    return(retval)
+             }
+             process <- nh*t(process)/(sqrt(n)*sigma)
+           }
+           colnames(process) <- colnames(X)
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n)) {
+               process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
+                             frequency = frequency(orig.y))
+             } else {
+               process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
+                             frequency = n)
+             }
+           }
+           retval$par <- h
+           retval$Q12 <- Q12
+           retval$type.name <- "ME test (moving estimates test)"
+           retval$lim.process <- "Brownian bridge increments"
+         },
+         
+         "Score-CUSUM" = {
+           fm <- lm.fit(X,y)
+           e <- as.vector(fm$residuals)
+           sigma2 <- sum(e^2)/n
+           k <- k + 1
+           ## Q12 <- sqrt(sigma2) * root.matrix(crossprod(X))/sqrt(n)
+           ## Q12 <- rbind(cbind(Q12, 0), 0)
+           ## Q12[k,k] <- sqrt(2)*sigma2
+           
+           process <- cbind(X * e, e^2 - sigma2)/sqrt(n)
+           Q12 <- root.matrix.crossprod(process)
+           process <- rbind(0, process)
+           process <- apply(process, 2, cumsum)
+           process <- t(chol2inv(chol(Q12)) %*% t(process))
+           
+           colnames(process) <- c(names(coef(fm)), "(Variance)")
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = end(data), frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n)) {
+               process <- ts(process, end = end(orig.y),
+                             frequency = frequency(orig.y))
+             }
+           }
+           retval$type.name <- "Score-based CUSUM test"
+           retval$lim.process <- "Brownian bridge"
+           retval$Q12 <- Q12
+         },
+         
+         "Score-MOSUM" = {
+           fm <- lm.fit(X,y)
+           e <- as.vector(fm$residuals)
+           sigma2 <- sum(e^2)/n
+           k <- k + 1
+           nh <- floor(n*h)
+           ## Q12 <- sqrt(sigma2) * root.matrix(crossprod(X))/sqrt(n)
+           ## Q12 <- rbind(cbind(Q12, 0), 0)
+           ## Q12[k,k] <- sqrt(2)*sigma2
+           
+           process <- cbind(X * e, e^2 - sigma2)/sqrt(n)
+           Q12 <- root.matrix.crossprod(process)
+           process <- rbind(0, process)
+           process <- apply(process, 2, cumsum)
+           process <- process[-(1:nh),] - process[1:(n-nh+1),]
+           process <- t(chol2inv(chol(Q12)) %*% t(process))
+           
+           colnames(process) <- c(names(coef(fm)), "(Variance)")
+           if(is.ts(data)) {
+             if(NROW(data) == n) process <- ts(process, end = time(data)[(n-floor(0.5 + nh/2))], frequency = frequency(data))
+           } else {
+             env <- environment(formula)
+             if(missing(data)) data <- env
+             orig.y <- eval(attr(terms(formula), "variables")[[2]], data, env)
+             if(is.ts(orig.y) && (NROW(orig.y) == n)) {
+               process <- ts(process, end = time(orig.y)[(n-floor(0.5 + nh/2))],
+                             frequency = frequency(orig.y))
+             } else {
+               process <- ts(process, end = (n-floor(0.5 + nh/2))/n,
+                             frequency = n)
+             }
+           }
+           retval$par <- h
+           retval$type.name <- "Score-based MOSUM test"
+           retval$lim.process <- "Brownian bridge increments"
+           retval$Q12 <- Q12
+         })
+  
+  
+  if(!is.ts(process))
+    process <- ts(process, start = 0, frequency = (NROW(process)-1))
+  
+  retval$process <- process
+  
+  if(is.ts(data) & NROW(data) == n)
+    retval$datatsp <- tsp(data)
+  else if(!is.null(orig.y) && is.ts(orig.y) & NROW(orig.y) == n)
+    retval$datatsp <- tsp(orig.y)
+  else
+    retval$datatsp <- c(0, 1, n)
+  
+  m.fit <- lm.fit(X,y)
+  retval$coefficients <- coefficients(m.fit)
+  retval$sigma <-  sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
+  class(retval) <- c("efp")
+  return(retval)
 }
+
+
+
+
+
+efp.matrix <- function(X,y,
+                       type = c("Rec-CUSUM", "OLS-CUSUM", "Rec-MOSUM", "OLS-MOSUM",
+                                "RE", "ME", "Score-CUSUM", "Score-MOSUM", "fluctuation"),
+                       h = 0.15, dynamic = FALSE, rescale = TRUE, ...)
+{
+  n <- nrow(X)
+  if(dynamic)
+  {
+    Xnames <- colnames(X)
+    X <- cbind(y[1:(n-1)],X[2:n,])
+    colnames(X) <- c("lag", Xnames)
+    y <- y[-1]
+    n <- n-1
+  }
+  k <- ncol(X)
+  type <- match.arg(type)
+  if(type == "fluctuation") type <- "RE"
+  
+  retval <- list(process = NULL,
+                 type = type,
+                 nreg = k,
+                 nobs = n,
+                 call = match.call(),
+                 # formula = formula,
+                 par = NULL,
+                 type.name = NULL,
+                 lim.process = NULL,
+                 coef = NULL,
+                 Q12 = NULL,
+                 datatsp = NULL,
+                 rescale = rescale)
+  
+  orig.y <- NULL
+  
+  switch(type,
+         
+         ## empirical process of Recursive CUSUM model
+         
+         "Rec-CUSUM" = {
+           w <- recresid(X, y)
+           sigma <- sqrt(var(w))
+           process <- cumsum(c(0,w))/(sigma*sqrt(n-k))
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = end(y), frequency = frequency(y))
+           }
+           retval$type.name <- "Recursive CUSUM test"
+           retval$lim.process <- "Brownian motion"
+         },
+         
+         ## empirical process of OLS-based CUSUM model
+         
+         "OLS-CUSUM" = {
+           fm <- lm.fit(X,y)
+           e <- fm$residuals
+           sigma <- sqrt(sum(e^2)/fm$df.residual)
+           process <- cumsum(c(0,e))/(sigma*sqrt(n))
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = end(y), frequency = frequency(y))
+           } 
+           retval$type.name <- "OLS-based CUSUM test"
+           retval$lim.process <- "Brownian bridge"
+         },
+         
+         ## empirical process of Recursive MOSUM model
+         
+         "Rec-MOSUM" = {
+           w <- recresid(X, y)
+           nw <- n - k
+           nh <- floor(nw*h)
+           process <- rep(0, (nw-nh))
+           for(i in 0:(nw-nh))
+           {
+             process[i+1] <- sum(w[(i+1):(i+nh)])
+           }
+           sigma <- sqrt(var(w)*(nw-1)/(nw-k))
+           process <- process/(sigma*sqrt(nw))
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = time(y)[(n-floor(0.5 + nh/2))], frequency = frequency(y))
+           }
+           retval$par <- h
+           retval$type.name <- "Recursive MOSUM test"
+           retval$lim.process <- "Brownian motion increments"
+         },
+         
+         ## empirical process of OLS-based MOSUM model
+         
+         "OLS-MOSUM" = {
+           fm <- lm.fit(X,y)
+           e <- fm$residuals
+           sigma <- sqrt(sum(e^2)/fm$df.residual)
+           nh <- floor(n*h)
+           process <- cumsum(c(0,e))
+           process <- process[-(1:nh)] - process[1:(n-nh+1)]
+           process <- process/(sigma*sqrt(n))
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = time(y)[(n-floor(0.5 + nh/2))], frequency = frequency(y))
+           }
+           retval$par <- h
+           retval$type.name <- "OLS-based MOSUM test"
+           retval$lim.process <- "Brownian bridge increments"
+         },
+         
+         ## empirical process of recursive estimates fluctuation
+         
+         "RE" = {
+           if (getOption("strucchange.use_armadillo", FALSE)) {
+             p <- .sc_cpp_efp_process_re(X,y,rescale)
+             process <- p$process
+             Q12 <- p$Q12
+           }
+           else {
+             m.fit <- lm.fit(X,y)
+             beta.hat <- m.fit$coefficients
+             sigma <- sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
+             process <- matrix(rep(0,k*(n-k+1)), nrow=k)
+             Q12 <- root.matrix.crossprod(X)/sqrt(n)
+             
+             if(rescale)
+             {
+               for(i in k:(n-1))
+               {
+                 Qi12 <- root.matrix.crossprod(X[1:i,])/sqrt(i)
+                 process[,(i-k+1)] <- Qi12 %*%
+                   (lm.fit(as.matrix(X[1:i,]), y[1:i])$coefficients - beta.hat)
+               }
+             }
+             else
+             {
+               for(i in k:(n-1))
+               {
+                 process[,(i-k+1)] <- Q12 %*% (lm.fit(as.matrix(X[1:i,]),
+                                                      y[1:i])$coefficients - beta.hat)
+               }
+             }
+             process <- t(cbind(0, process))*matrix(rep((k-1):n,k),
+                                                    ncol=k)/(sigma*sqrt(n))
+           }
+           colnames(process) <- colnames(X)
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = end(y), frequency = frequency(y))
+           } 
+           retval$Q12 <- p$Q12
+           retval$type.name <- "RE test (recursive estimates test)"
+           retval$lim.process <- "Brownian bridge"
+         },
+         
+         ## empirical process of moving estimates fluctuation
+         "ME" = {
+           nh <- floor(n*h)
+           if (getOption("strucchange.use_armadillo", FALSE)) {
+             p <- .sc_cpp_efp_process_me(X,y,rescale,h)
+             process <- p$process
+             Q12 <- p$Q12
+           }
+           else {
+             m.fit <- lm.fit(X,y)
+             beta.hat <- m.fit$coefficients
+             sigma <- sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
+             nh <- floor(n*h)
+             process <- matrix(rep(0,k*(n-nh+1)), nrow=k)
+             Q12 <- root.matrix.crossprod(X)/sqrt(n)
+             if(rescale)
+             {
+               for(i in 0:(n-nh))
+               {
+                 Qnh12 <- root.matrix.crossprod(X[(i+1):(i+nh),])/sqrt(nh)
+                 process[, i+1] <-  Qnh12 %*% (lm.fit(
+                   as.matrix(X[(i+1):(i+nh),]), y[(i+1):(i+nh)])$coefficients - beta.hat)
+               }
+             }
+             else
+             {
+               for(i in 0:(n-nh))
+               {
+                 process[, i+1] <- Q12 %*% (lm.fit(as.matrix(X[(i+1):(i+nh),]),
+                                                   y[(i+1):(i+nh)])$coefficients - beta.hat)
+               }
+             }
+             process <- nh*t(process)/(sqrt(n)*sigma)
+           }
+           colnames(process) <- colnames(X)
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = time(y)[(n-floor(0.5 + nh/2))], frequency = frequency(y))
+           } 
+           retval$par <- h
+           retval$Q12 <- p$Q12
+           retval$type.name <- "ME test (moving estimates test)"
+           retval$lim.process <- "Brownian bridge increments"
+         },
+         
+         "Score-CUSUM" = {
+           fm <- lm.fit(X,y)
+           e <- as.vector(fm$residuals)
+           sigma2 <- sum(e^2)/n
+           k <- k + 1
+           ## Q12 <- sqrt(sigma2) * root.matrix(crossprod(X))/sqrt(n)
+           ## Q12 <- rbind(cbind(Q12, 0), 0)
+           ## Q12[k,k] <- sqrt(2)*sigma2
+           
+           process <- cbind(X * e, e^2 - sigma2)/sqrt(n)
+           Q12 <- root.matrix.crossprod(process)
+           process <- rbind(0, process)
+           process <- apply(process, 2, cumsum)
+           process <- t(chol2inv(chol(Q12)) %*% t(process))
+           
+           colnames(process) <- c(names(coef(fm)), "(Variance)")
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = end(y), frequency = frequency(y))
+           } 
+           retval$type.name <- "Score-based CUSUM test"
+           retval$lim.process <- "Brownian bridge"
+           retval$Q12 <- Q12
+         },
+         
+         "Score-MOSUM" = {
+           fm <- lm.fit(X,y)
+           e <- as.vector(fm$residuals)
+           sigma2 <- sum(e^2)/n
+           k <- k + 1
+           nh <- floor(n*h)
+           ## Q12 <- sqrt(sigma2) * root.matrix(crossprod(X))/sqrt(n)
+           ## Q12 <- rbind(cbind(Q12, 0), 0)
+           ## Q12[k,k] <- sqrt(2)*sigma2
+           
+           process <- cbind(X * e, e^2 - sigma2)/sqrt(n)
+           Q12 <- root.matrix.crossprod(process)
+           process <- rbind(0, process)
+           process <- apply(process, 2, cumsum)
+           process <- process[-(1:nh),] - process[1:(n-nh+1),]
+           process <- t(chol2inv(chol(Q12)) %*% t(process))
+           
+           colnames(process) <- c(names(coef(fm)), "(Variance)")
+           if(is.ts(y)) {
+             if(NROW(y) == n) process <- ts(process, end = time(y)[(n-floor(0.5 + nh/2))], frequency = frequency(y))
+           } 
+           retval$par <- h
+           retval$type.name <- "Score-based MOSUM test"
+           retval$lim.process <- "Brownian bridge increments"
+           retval$Q12 <- Q12
+         })
+  
+  
+  if(!is.ts(process))
+    process <- ts(process, start = 0, frequency = (NROW(process)-1))
+  
+  retval$process <- process
+  
+  if(is.ts(y) & NROW(y) == n)
+    retval$datatsp <- tsp(y)
+  else if(!is.null(orig.y) && is.ts(orig.y) & NROW(orig.y) == n)
+    retval$datatsp <- tsp(orig.y)
+  else
+    retval$datatsp <- c(0, 1, n)
+  
+  m.fit <- lm.fit(X,y)
+  retval$coefficients <- coefficients(m.fit)
+  retval$sigma <-  sqrt(sum(m.fit$residual^2)/m.fit$df.residual)
+  class(retval) <- c("efp")
+  return(retval)
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 plot.efp <- function(x, alpha = 0.05, alt.boundary = FALSE, boundary = TRUE,

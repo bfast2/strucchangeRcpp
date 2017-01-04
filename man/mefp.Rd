@@ -1,9 +1,11 @@
 \name{mefp}
 \alias{mefp}
 \alias{mefp.formula}
+\alias{mefp.matrix}
 \alias{mefp.efp}
 \alias{print.mefp}
 \alias{monitor}
+\alias{monitor.matrix}
 \title{Monitoring of Empirical Fluctuation Processes}
 \description{
   Online monitoring of structural breaks in a linear regression model. A
@@ -11,22 +13,29 @@
   signals structural breaks.
 }
 \usage{
-mefp(obj, ...)
-
 \method{mefp}{formula}(formula, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME",
     "fluctuation"), data, h = 1, alpha = 0.05,
     functional = c("max", "range"), period = 10,
     tolerance = .Machine$double.eps^0.5, CritvalTable = NULL,
     rescale = NULL, border = NULL, ...)
-
+    
+\method{mefp}{matrix}(X,y, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME",
+    "fluctuation"), h = 1, alpha = 0.05,
+    functional = c("max", "range"), period = 10,
+    tolerance = .Machine$double.eps^0.5, CritvalTable = NULL,
+    rescale = NULL, border = NULL, ...)
+    
 \method{mefp}{efp}(obj, alpha=0.05, functional = c("max", "range"),
     period = 10, tolerance = .Machine$double.eps^0.5,
     CritvalTable = NULL, rescale = NULL, border = NULL, ...)
 
 monitor(obj, data = NULL, verbose = TRUE)
+monitor.matrix(obj, X, y, verbose = TRUE)
 }
 \arguments{
-  \item{formula}{a symbolic description for the model to be tested.}
+  \item{X, y, formula}{specification of the linear regression model:
+    either by a regressor matrix \code{X} and a response variable \code{y},
+    or by a \code{formula}.}
   \item{data}{an optional data frame containing the variables in the model. By
      default the variables are taken from the environment which \code{efp} is
      called from.}
