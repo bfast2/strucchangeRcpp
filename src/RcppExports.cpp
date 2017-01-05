@@ -6,6 +6,67 @@
 
 using namespace Rcpp;
 
+// sc_cpp_rssi
+arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, const bool intercept_only, const double& tol);
+RcppExport SEXP strucchange_sc_cpp_rssi(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP iSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type i(iSEXP);
+    Rcpp::traits::input_parameter< const bool >::type intercept_only(intercept_onlySEXP);
+    Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_rssi(y, X, n, i, intercept_only, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sc_cpp_rss
+double sc_cpp_rss(const arma::mat& rss_triang, const int i, const int j);
+RcppExport SEXP strucchange_sc_cpp_rss(SEXP rss_triangSEXP, SEXP iSEXP, SEXP jSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type rss_triang(rss_triangSEXP);
+    Rcpp::traits::input_parameter< const int >::type i(iSEXP);
+    Rcpp::traits::input_parameter< const int >::type j(jSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_rss(rss_triang, i, j));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sc_cpp_extend_rss_table
+arma::mat sc_cpp_extend_rss_table(arma::mat& rss_table, const arma::mat& rss_triang, int n, int h, int breaks);
+RcppExport SEXP strucchange_sc_cpp_extend_rss_table(SEXP rss_tableSEXP, SEXP rss_triangSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type rss_table(rss_tableSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rss_triang(rss_triangSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type breaks(breaksSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_extend_rss_table(rss_table, rss_triang, n, h, breaks));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sc_cpp_construct_rss_table
+List sc_cpp_construct_rss_table(const arma::vec& y, const arma::mat& X, int n, int h, int breaks, const bool intercept_only, const double& tol);
+RcppExport SEXP strucchange_sc_cpp_construct_rss_table(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type breaks(breaksSEXP);
+    Rcpp::traits::input_parameter< const bool >::type intercept_only(intercept_onlySEXP);
+    Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_construct_rss_table(y, X, n, h, breaks, intercept_only, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sc_cpp_efp_process_me
 List sc_cpp_efp_process_me(const arma::mat& X, const arma::vec& y, bool rescale, double h);
 RcppExport SEXP strucchange_sc_cpp_efp_process_me(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP, SEXP hSEXP) {

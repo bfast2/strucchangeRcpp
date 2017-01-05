@@ -51,59 +51,82 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
   ## compute ith row of the RSS diagonal matrix, i.e,
   ## the recursive residuals for segments starting at i = 1:(n-h+1)
   
-  RSSi <- function(i)
-  {
-    ssr <- if(intercept_only) {
-      (y[i:n] - cumsum(y[i:n])/(1L:(n-i+1L)))[-1L] * sqrt(1L + 1L/(1L:(n-i)))
-    } else {
-      recresid(X[i:n,,drop = FALSE],y[i:n])
-    }
-    c(rep(NA, k), cumsum(ssr^2))
-  }
   
-  ## employ HPC support if available/selected
-  RSS.triang <- if(hpc == "none") sapply(1:(n-h+1), RSSi) else foreach::foreach(i = 1:(n-h+1)) %dopar% RSSi(i)
-  
-  ## function to extract the RSS(i,j) from RSS.triang
-  RSS <- function(i,j) RSS.triang[[i]][j - i + 1]
-  
-  ## compute optimal previous partner if observation i is the mth break
-  ## store results together with RSSs in RSS.table
-  
-  ## breaks = 1
-  
-  index <- h:(n-h)
-  break.RSS <- sapply(index, function(i) RSS(1,i))
-  
-  RSS.table <- cbind(index, break.RSS)
-  rownames(RSS.table) <- as.character(index)
-  
-  ## breaks >= 2
-  
-  extend.RSS.table <- function(RSS.table, breaks)
-  {
-    if((breaks*2) > ncol(RSS.table)) {
-      for(m in (ncol(RSS.table)/2 + 1):breaks)
-      {
-        my.index <- (m*h):(n-h)
-        my.RSS.table <- RSS.table[,c((m-1)*2 - 1, (m-1)*2)]
-        my.RSS.table <- cbind(my.RSS.table, NA, NA)
-        for(i in my.index)
-        {
-          pot.index <- ((m-1)*h):(i - h)
-          break.RSS <- sapply(pot.index, function(j) my.RSS.table[as.character(j), 2] + RSS(j+1,i))
-          opt <- which.min(break.RSS)
-          my.RSS.table[as.character(i), 3:4] <- c(pot.index[opt], break.RSS[opt])
-        }
-        RSS.table <- cbind(RSS.table, my.RSS.table[,3:4])
+  if (getOption("strucchange.use_armadillo", FALSE)) {
+    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X))
+    RSS.table = res$RSS.table
+    dimnames(RSS.table) = list(as.character(h:(n-h)), 
+                               as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
+    RSS.triang = res$RSS.triang
+    RSS <- function(i, j) .sc_cpp_rss(RSS.triang, i, j)
+    extend.RSS.table <- function(RSS.table, breaks) {
+      if (2*breaks > ncol(RSS.table)) {
+        RSS.table = .sc_cpp_extend_rss_table(rss_table = RSS.table, rss_triang = RSS.triang, n = n, h=h, breaks = breaks)
+        dimnames(RSS.table) = list(as.character(h:(n-h)), as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
       }
-      colnames(RSS.table) <- as.vector(rbind(paste("break", 1:breaks, sep = ""),
-                                             paste("RSS", 1:breaks, sep = "")))
+      RSS.table
     }
-    return(RSS.table)
+  }
+  else {
+    
+    RSSi <- function(i)
+    {
+      ssr <- if(intercept_only) {
+        (y[i:n] - cumsum(y[i:n])/(1L:(n-i+1L)))[-1L] * sqrt(1L + 1L/(1L:(n-i)))
+      } else {
+        recresid(X[i:n,,drop = FALSE],y[i:n])
+      }
+      c(rep(NA, k), cumsum(ssr^2))
+    }
+    
+    ## employ HPC support if available/selected
+    RSS.triang <- if(hpc == "none") sapply(1:(n-h+1), RSSi) else foreach::foreach(i = 1:(n-h+1)) %dopar% RSSi(i)
+    
+    ## function to extract the RSS(i,j) from RSS.triang
+    RSS <- function(i,j) RSS.triang[[i]][j - i + 1]
+    
+    ## compute optimal previous partner if observation i is the mth break
+    ## store results together with RSSs in RSS.table
+    
+    ## breaks = 1
+    
+    index <- h:(n-h)
+    break.RSS <- sapply(index, function(i) RSS(1,i))
+    
+    RSS.table <- cbind(index, break.RSS)
+    rownames(RSS.table) <- as.character(index)
+    
+    ## breaks >= 2
+    
+    extend.RSS.table <- function(RSS.table, breaks)
+    {
+      if((breaks*2) > ncol(RSS.table)) {
+        for(m in (ncol(RSS.table)/2 + 1):breaks)
+        {
+          my.index <- (m*h):(n-h)
+          my.RSS.table <- RSS.table[,c((m-1)*2 - 1, (m-1)*2)]
+          my.RSS.table <- cbind(my.RSS.table, NA, NA)
+          for(i in my.index)
+          {
+            pot.index <- ((m-1)*h):(i - h)
+            break.RSS <- sapply(pot.index, function(j) my.RSS.table[as.character(j), 2] + RSS(j+1,i))
+            opt <- which.min(break.RSS)
+            my.RSS.table[as.character(i), 3:4] <- c(pot.index[opt], break.RSS[opt])
+          }
+          RSS.table <- cbind(RSS.table, my.RSS.table[,3:4])
+        }
+        colnames(RSS.table) <- as.vector(rbind(paste("break", 1:breaks, sep = ""),
+                                               paste("RSS", 1:breaks, sep = "")))
+      }
+      return(RSS.table)
+    }
+    
+    RSS.table <- extend.RSS.table(RSS.table, breaks)
+    
   }
   
-  RSS.table <- extend.RSS.table(RSS.table, breaks)
+  
+  
   
   ## extract optimal breaks
   
@@ -180,59 +203,78 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
   ## compute ith row of the RSS diagonal matrix, i.e,
   ## the recursive residuals for segments starting at i = 1:(n-h+1)
   
-  RSSi <- function(i)
-  {
-    ssr <- if(intercept_only) {
-      (y[i:n] - cumsum(y[i:n])/(1L:(n-i+1L)))[-1L] * sqrt(1L + 1L/(1L:(n-i)))
-    } else {
-      recresid(X[i:n,,drop = FALSE],y[i:n])
-    }
-    c(rep(NA, k), cumsum(ssr^2))
-  }
   
-  ## employ HPC support if available/selected
-  RSS.triang <- if(hpc == "none") sapply(1:(n-h+1), RSSi) else foreach::foreach(i = 1:(n-h+1)) %dopar% RSSi(i)
-  
-  ## function to extract the RSS(i,j) from RSS.triang
-  RSS <- function(i,j) RSS.triang[[i]][j - i + 1]
-  
-  ## compute optimal previous partner if observation i is the mth break
-  ## store results together with RSSs in RSS.table
-  
-  ## breaks = 1
-  
-  index <- h:(n-h)
-  break.RSS <- sapply(index, function(i) RSS(1,i))
-  
-  RSS.table <- cbind(index, break.RSS)
-  rownames(RSS.table) <- as.character(index)
-  
-  ## breaks >= 2
-  
-  extend.RSS.table <- function(RSS.table, breaks)
-  {
-    if((breaks*2) > ncol(RSS.table)) {
-      for(m in (ncol(RSS.table)/2 + 1):breaks)
-      {
-        my.index <- (m*h):(n-h)
-        my.RSS.table <- RSS.table[,c((m-1)*2 - 1, (m-1)*2)]
-        my.RSS.table <- cbind(my.RSS.table, NA, NA)
-        for(i in my.index)
-        {
-          pot.index <- ((m-1)*h):(i - h)
-          break.RSS <- sapply(pot.index, function(j) my.RSS.table[as.character(j), 2] + RSS(j+1,i))
-          opt <- which.min(break.RSS)
-          my.RSS.table[as.character(i), 3:4] <- c(pot.index[opt], break.RSS[opt])
-        }
-        RSS.table <- cbind(RSS.table, my.RSS.table[,3:4])
+  if (getOption("strucchange.use_armadillo", FALSE)) {
+    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X))
+    RSS.table = res$RSS.table
+    dimnames(RSS.table) = list(as.character(h:(n-h)), 
+                               as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
+    RSS.triang = res$RSS.triang
+    RSS <- function(i, j) .sc_cpp_rss(RSS.triang, i, j)
+    extend.RSS.table <- function(RSS.table, breaks) {
+      if (2*breaks > ncol(RSS.table)) {
+        RSS.table = .sc_cpp_extend_rss_table(rss_table = RSS.table, rss_triang = RSS.triang, n = n, h=h, breaks = breaks)
+        dimnames(RSS.table) = list(as.character(h:(n-h)), as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
       }
-      colnames(RSS.table) <- as.vector(rbind(paste("break", 1:breaks, sep = ""),
-                                             paste("RSS", 1:breaks, sep = "")))
+      RSS.table
     }
-    return(RSS.table)
   }
-  
-  RSS.table <- extend.RSS.table(RSS.table, breaks)
+  else {
+
+    RSSi <- function(i)
+    {
+      ssr <- if(intercept_only) {
+        (y[i:n] - cumsum(y[i:n])/(1L:(n-i+1L)))[-1L] * sqrt(1L + 1L/(1L:(n-i)))
+      } else {
+        recresid(X[i:n,,drop = FALSE],y[i:n])
+      }
+      c(rep(NA, k), cumsum(ssr^2))
+    }
+    
+    ## employ HPC support if available/selected
+    RSS.triang <- if(hpc == "none") sapply(1:(n-h+1), RSSi) else foreach::foreach(i = 1:(n-h+1)) %dopar% RSSi(i)
+    
+    ## function to extract the RSS(i,j) from RSS.triang
+    RSS <- function(i,j) RSS.triang[[i]][j - i + 1]
+    
+    ## compute optimal previous partner if observation i is the mth break
+    ## store results together with RSSs in RSS.table
+    
+    ## breaks = 1
+    
+    index <- h:(n-h)
+    break.RSS <- sapply(index, function(i) RSS(1,i))
+    
+    RSS.table <- cbind(index, break.RSS)
+    rownames(RSS.table) <- as.character(index)
+    
+    ## breaks >= 2
+    
+    extend.RSS.table <- function(RSS.table, breaks)
+    {
+      if((breaks*2) > ncol(RSS.table)) {
+        for(m in (ncol(RSS.table)/2 + 1):breaks)
+        {
+          my.index <- (m*h):(n-h)
+          my.RSS.table <- RSS.table[,c((m-1)*2 - 1, (m-1)*2)]
+          my.RSS.table <- cbind(my.RSS.table, NA, NA)
+          for(i in my.index)
+          {
+            pot.index <- ((m-1)*h):(i - h)
+            break.RSS <- sapply(pot.index, function(j) my.RSS.table[as.character(j), 2] + RSS(j+1,i))
+            opt <- which.min(break.RSS)
+            my.RSS.table[as.character(i), 3:4] <- c(pot.index[opt], break.RSS[opt])
+          }
+          RSS.table <- cbind(RSS.table, my.RSS.table[,3:4])
+        }
+        colnames(RSS.table) <- as.vector(rbind(paste("break", 1:breaks, sep = ""),
+                                               paste("RSS", 1:breaks, sep = "")))
+      }
+      return(RSS.table)
+    }
+    
+    RSS.table <- extend.RSS.table(RSS.table, breaks)
+  }
   
   ## extract optimal breaks
   

@@ -7,6 +7,9 @@
 using namespace Rcpp;
 
 
+
+
+
 //' Computation of recursive residuals in C++
 //' @param X design matrix
 //' @param y response vector
@@ -15,18 +18,15 @@ using namespace Rcpp;
 //' @param tol tolerance in the computation of recursive model coefficients
 //' @return vector containing the recursive residuals 
 //' @seealso \code{\link{recresid}} and \code{\link{recresid.default}}
-// [[Rcpp::export(name = ".sc_cpp_recresid")]]
-NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol) {
-  
+arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol) {
   if(!(start > X.n_cols && start <= X.n_rows)) stop("Invalid start");
   if(!(end >= start && end <= X.n_rows)) stop("Invalid end");
   --start;
   --end;
-  
   int n=end; // n is not the number of rows but the last element index, i.e., nrows-1
   int q=start-1;
   int k = X.n_cols;
-  arma::vec rval = arma::zeros<arma::vec>(n-q);
+  arma::vec rval = arma::vec(n-q, arma::fill::zeros);
   
   // If the current submatrix of X has reciprocal conditioning 
   // number less then the following constant, the ordinary R 
@@ -47,6 +47,7 @@ NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned 
   Function fcoef0 =  env_sc[".coef0"];
   Function lmfit = env_stats["lm.fit"];
   
+  
   // Decide whether to use Armadillo or R depending on the reciprocal conditioning number of cur_X
   if (1/arma::cond(cur_X) >= rcond_min) {
     arma::solve(cur_coef_full, cur_X, cur_y, arma::solve_opts::no_approx);
@@ -59,12 +60,12 @@ NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned 
     cur_coef_full  = as<arma::colvec>(fcoef0(fitted));
   }
   
+  
   arma::colvec cur_coef = cur_coef_full; 
   arma::mat xr = X.row(q+1); 
   arma::vec fr = (1 + xr * X1  * trans(xr));
   rval(0) = as_scalar((y(q+1) - xr * cur_coef)/arma::sqrt(fr));
   bool check = true;
-  
   if((q+1) < n)
   {
     for(int r=q+2; r<=n; ++r) {
@@ -103,6 +104,24 @@ NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned 
       rval(r-q-1) = as_scalar((y(r) - xr * cur_coef)/arma::sqrt(fr));
     }
   }
+  return rval;
+}
+
+
+
+
+
+//' Computation of recursive residuals in C++
+//' @param X design matrix
+//' @param y response vector
+//' @param start integer (1-based) index of the first observation to compute recursive residuals
+//' @param end integer (1-based) index of the last observation to compute recursive residuals
+//' @param tol tolerance in the computation of recursive model coefficients
+//' @return vector containing the recursive residuals 
+//' @seealso \code{\link{recresid}} and \code{\link{recresid.default}}
+// [[Rcpp::export(name = ".sc_cpp_recresid")]]
+NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol) {
+  arma::vec rval = sc_cpp_recresid_arma(X,y,start,end,tol);
   return  Rcpp::NumericVector(rval.begin(), rval.end());
 }
 
