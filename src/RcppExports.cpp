@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // sc_cpp_rssi
-arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, const bool intercept_only, const double& tol);
-RcppExport SEXP strucchange_sc_cpp_rssi(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP iSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP) {
+arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, const bool intercept_only, const double& tol, const double& rcond_min);
+RcppExport SEXP strucchange_sc_cpp_rssi(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP iSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type i(iSEXP);
     Rcpp::traits::input_parameter< const bool >::type intercept_only(intercept_onlySEXP);
     Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(sc_cpp_rssi(y, X, n, i, intercept_only, tol));
+    Rcpp::traits::input_parameter< const double& >::type rcond_min(rcond_minSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_rssi(y, X, n, i, intercept_only, tol, rcond_min));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -51,8 +52,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sc_cpp_construct_rss_table
-List sc_cpp_construct_rss_table(const arma::vec& y, const arma::mat& X, int n, int h, int breaks, const bool intercept_only, const double& tol);
-RcppExport SEXP strucchange_sc_cpp_construct_rss_table(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP) {
+List sc_cpp_construct_rss_table(const arma::vec& y, const arma::mat& X, int n, int h, int breaks, const bool intercept_only, const double& tol, const double& rcond_min);
+RcppExport SEXP strucchange_sc_cpp_construct_rss_table(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -63,7 +64,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type breaks(breaksSEXP);
     Rcpp::traits::input_parameter< const bool >::type intercept_only(intercept_onlySEXP);
     Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(sc_cpp_construct_rss_table(y, X, n, h, breaks, intercept_only, tol));
+    Rcpp::traits::input_parameter< const double& >::type rcond_min(rcond_minSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_construct_rss_table(y, X, n, h, breaks, intercept_only, tol, rcond_min));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -95,8 +97,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sc_cpp_recresid
-NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y, unsigned int start, unsigned int end, const double& tol);
-RcppExport SEXP strucchange_sc_cpp_recresid(SEXP XSEXP, SEXP ySEXP, SEXP startSEXP, SEXP endSEXP, SEXP tolSEXP) {
+NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y, unsigned int start, unsigned int end, const double& tol, const double& rcond_min);
+RcppExport SEXP strucchange_sc_cpp_recresid(SEXP XSEXP, SEXP ySEXP, SEXP startSEXP, SEXP endSEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -105,7 +107,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< unsigned int >::type start(startSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type end(endSEXP);
     Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(sc_cpp_recresid(X, y, start, end, tol));
+    Rcpp::traits::input_parameter< const double& >::type rcond_min(rcond_minSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_recresid(X, y, start, end, tol, rcond_min));
     return rcpp_result_gen;
 END_RCPP
 }

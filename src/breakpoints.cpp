@@ -12,7 +12,7 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export(name = ".sc_cpp_rssi")]]
-arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, const bool intercept_only, const double& tol) {
+arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, const bool intercept_only, const double& tol, const double& rcond_min) {
   int k = X.n_cols;
   arma::vec ssr(n-i-1);
   arma::vec ysub = y.subvec(i-1, n-1);
@@ -23,7 +23,7 @@ arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, cons
     ssr =  A.subvec(1,n-i) % arma::sqrt(1 + 1 / (v123.subvec(0,n-i-1)));
   }
   else {
-    ssr = sc_cpp_recresid_arma(X.submat(i-1, 0, n-1, k-1 ), ysub, k+1, n-i+1, tol);
+    ssr = sc_cpp_recresid_arma(X.submat(i-1, 0, n-1, k-1 ), ysub, k+1, n-i+1, tol, rcond_min);
   }
   arma::vec out(n-i+1);
   out.fill(NA_REAL);
@@ -33,11 +33,11 @@ arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, cons
 
 
 
-arma::mat sc_cpp_rssi_triang(const arma::vec& y, const arma::mat& X, int n, int h, const bool intercept_only, const double& tol) {
+arma::mat sc_cpp_rssi_triang(const arma::vec& y, const arma::mat& X, int n, int h, const bool intercept_only, const double& tol, const double& rcond_min) {
   arma::mat out(n,n-h+1);
   out.fill(NA_REAL);
   for (int i=1; i<=n-h+1; ++i) {
-    out.submat(0,i-1,n-i,i-1) = sc_cpp_rssi(y,X,n,i,intercept_only,tol);
+    out.submat(0,i-1,n-i,i-1) = sc_cpp_rssi(y,X,n,i,intercept_only,tol, rcond_min);
   }
   return out;
 }
@@ -85,11 +85,11 @@ arma::mat sc_cpp_extend_rss_table(arma::mat& rss_table, const arma::mat& rss_tri
 //' @param 
 //' @return 
 // [[Rcpp::export(name = ".sc_cpp_construct_rss_table")]]
-List sc_cpp_construct_rss_table(const arma::vec& y, const arma::mat& X, int n, int h, int breaks, const bool intercept_only, const double& tol) {
+List sc_cpp_construct_rss_table(const arma::vec& y, const arma::mat& X, int n, int h, int breaks, const bool intercept_only, const double& tol, const double& rcond_min) {
   
   int n_rows = n-h-h+1;
   arma::mat rss_table(n_rows, 2);
-  arma::mat rss_triang = sc_cpp_rssi_triang(y,X,n,h,intercept_only,tol);
+  arma::mat rss_triang = sc_cpp_rssi_triang(y,X,n,h,intercept_only,tol, rcond_min);
   rss_table.col(0) = arma::linspace<arma::vec>(h,n-h,n_rows);
   for (int i=0; i<n_rows; ++i) {  
     rss_table(i,1) = sc_cpp_rss(rss_triang, 1,i+h);

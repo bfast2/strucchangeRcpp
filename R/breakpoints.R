@@ -53,7 +53,7 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
   
   
   if (getOption("strucchange.use_armadillo", FALSE)) {
-    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X))
+    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X), getOption("strucchange.armadillo_rcond_min",sqrt(.Machine$double.eps)))
     RSS.table = res$RSS.table
     dimnames(RSS.table) = list(as.character(h:(n-h)), 
                                as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
@@ -205,7 +205,7 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
   
   
   if (getOption("strucchange.use_armadillo", FALSE)) {
-    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X))
+    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X),getOption("strucchange.armadillo_rcond_min",sqrt(.Machine$double.eps)))
     RSS.table = res$RSS.table
     dimnames(RSS.table) = list(as.character(h:(n-h)), 
                                as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))

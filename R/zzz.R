@@ -1,7 +1,8 @@
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.strucchange <- list(
-    strucchange.use_armadillo = FALSE
+    strucchange.use_armadillo = FALSE,
+    strucchange.armadillo_rcond_min = sqrt(.Machine$double.eps)
   )
   toset <- !(names(op.strucchange) %in% names(op))
   if(any(toset)) options(op.strucchange[toset])

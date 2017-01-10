@@ -18,7 +18,7 @@ using namespace Rcpp;
 //' @param tol tolerance in the computation of recursive model coefficients
 //' @return vector containing the recursive residuals 
 //' @seealso \code{\link{recresid}} and \code{\link{recresid.default}}
-arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol) {
+arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol, const double& rcond_min) {
   if(!(start > X.n_cols && start <= X.n_rows)) stop("Invalid start");
   if(!(end >= start && end <= X.n_rows)) stop("Invalid end");
   --start;
@@ -34,8 +34,7 @@ arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned
   // is used. Otherwise, Armadillo functions solve() and 
   // inv_sympd() are used. This applies only to the first 
   // iterations as long as check is true. 
-  const double rcond_min = sqrt(DBL_EPSILON);
-  
+
   arma::vec cur_y = y.subvec(0, q);
   arma::mat cur_X = X.submat(0, 0, q, k-1);
   arma::mat X1;
@@ -120,8 +119,8 @@ arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned
 //' @return vector containing the recursive residuals 
 //' @seealso \code{\link{recresid}} and \code{\link{recresid.default}}
 // [[Rcpp::export(name = ".sc_cpp_recresid")]]
-NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol) {
-  arma::vec rval = sc_cpp_recresid_arma(X,y,start,end,tol);
+NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol, const double& rcond_min) {
+  arma::vec rval = sc_cpp_recresid_arma(X,y,start,end,tol,rcond_min);
   return  Rcpp::NumericVector(rval.begin(), rval.end());
 }
 

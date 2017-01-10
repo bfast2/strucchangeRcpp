@@ -44,7 +44,7 @@ recresid.default <- function(x, y, start = ncol(x) + 1, end = nrow(x),
   stopifnot(start > ncol(x) & start <= nrow(x))
   stopifnot(end >= start & end <= nrow(x))
   if (getOption("strucchange.use_armadillo", FALSE))
-    return(.sc_cpp_recresid(x,y,start,end,tol))
+    return(.sc_cpp_recresid(x,y,start,end,tol, getOption("strucchange.armadillo_rcond_min",sqrt(.Machine$double.eps))))
   
   n <- end
   q <- start - 1

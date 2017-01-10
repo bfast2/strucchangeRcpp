@@ -10,9 +10,9 @@ using namespace Rcpp;
 
 
 
-arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol);
+arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol, const double&  rcond_min);
   
-NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol);
+NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y,  unsigned int start, unsigned int end, const double& tol, const double&  rcond_min);
 
 
 #endif 
