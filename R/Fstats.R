@@ -15,8 +15,7 @@ Fstats <- function(formula, from = 0.15, to = NULL, data = list(), vcov. = NULL)
 
   k <- ncol(X)
   n <- length(y)
-  e <- lm.fit(X,y)$residuals
-
+ 
   ## check if tsp are available and may be used
   ## (potentially not if NAs were removed)
   ytsp <- NULL
@@ -70,31 +69,42 @@ Fstats <- function(formula, from = 0.15, to = NULL, data = list(), vcov. = NULL)
   else
     stop("inadmissable change points: 'from' is larger than 'to'")
 
-  sume2 <- sum(e^2)
+  
   lambda <- ((n-from)*to)/(from*(n-to))
   np <- length(point)
   stats <- rep(0,np)
-  for(i in 1:np)
-  {
-    X1 <- as.matrix(X[(1:point[i]),])
-    X2 <- as.matrix(X[((point[i]+1):n),])
-
-    if(is.null(vcov.)) {
-      fm1 <- lm.fit(X1,y[1:point[i]])
-      fm2 <- lm.fit(X2,y[((point[i]+1):n)])
-      u <- c(fm1$residuals, fm2$residuals)
-      sigma2 <- (sum(u^2))/(n-2*k)
-      stats[i] <- (sume2-sum(u^2))/sigma2
-    }
-    else {
-      allX <- cbind(X1, matrix(rep(0, point[i]*k), ncol=k))
-      allX <- rbind(allX, cbind(X2, X2))
-      fm2 <- lm(y ~ 0 + allX)
-      beta2 <- coef(fm2)[-(1:k)]
-      V <- vcov.(fm2)
-      stats[i] <- as.vector(t(beta2) %*% chol2inv(chol(V[-(1:k),-(1:k)])) %*% beta2)
-     }
+  
+  if(is.null(vcov.) & getOption("strucchange.use_armadillo", FALSE)) {
+    out = .sc_cpp_fstats(X,y,from,to,getOption("strucchange.armadillo_rcond_min"))
+    stats = out$stats
+    sume2 = out$sume2
   }
+  else {
+    e <- lm.fit(X,y)$residuals
+    sume2 <- sum(e^2)
+    for(i in 1:np)
+    {
+      X1 <- as.matrix(X[(1:point[i]),])
+      X2 <- as.matrix(X[((point[i]+1):n),])
+      
+      if(is.null(vcov.)) {
+        fm1 <- lm.fit(X1,y[1:point[i]])
+        fm2 <- lm.fit(X2,y[((point[i]+1):n)])
+        u <- c(fm1$residuals, fm2$residuals)
+        sigma2 <- (sum(u^2))/(n-2*k)
+        stats[i] <- (sume2-sum(u^2))/sigma2
+      }
+      else {
+        allX <- cbind(X1, matrix(rep(0, point[i]*k), ncol=k))
+        allX <- rbind(allX, cbind(X2, X2))
+        fm2 <- lm(y ~ 0 + allX)
+        beta2 <- coef(fm2)[-(1:k)]
+        V <- vcov.(fm2)
+        stats[i] <- as.vector(t(beta2) %*% chol2inv(chol(V[-(1:k),-(1:k)])) %*% beta2)
+      }
+    }
+  }
+  
 
   sup.point <- which.max(stats) + from - 1
   if(is.null(vcov.))

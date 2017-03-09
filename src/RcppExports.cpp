@@ -96,6 +96,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sc_cpp_fstats
+List sc_cpp_fstats(const arma::mat& X, const arma::vec& y, int istart, int iend, double& rcond_min);
+RcppExport SEXP strucchange_sc_cpp_fstats(SEXP XSEXP, SEXP ySEXP, SEXP istartSEXP, SEXP iendSEXP, SEXP rcond_minSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type istart(istartSEXP);
+    Rcpp::traits::input_parameter< int >::type iend(iendSEXP);
+    Rcpp::traits::input_parameter< double& >::type rcond_min(rcond_minSEXP);
+    rcpp_result_gen = Rcpp::wrap(sc_cpp_fstats(X, y, istart, iend, rcond_min));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sc_cpp_recresid
 NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y, unsigned int start, unsigned int end, const double& tol, const double& rcond_min);
 RcppExport SEXP strucchange_sc_cpp_recresid(SEXP XSEXP, SEXP ySEXP, SEXP startSEXP, SEXP endSEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {

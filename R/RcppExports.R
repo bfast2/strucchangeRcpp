@@ -43,6 +43,17 @@
     .Call('strucchange_sc_cpp_efp_process_re', PACKAGE = 'strucchange', X, y, rescale)
 }
 
+#' Compute F statistics for a data window
+#' @param X design matrix
+#' @param y response vector
+#' @param istart window start index (1-based, as in R)
+#' @param iend window end index (1-based, as in R)
+#' @param rcond_min minimum reciprocal conditioning number to use armadillo::solve
+#' @return list with elements stats and sume2 where stats is a vector with F statistics and sume2 is the sum of squared residuals of the model using all data
+.sc_cpp_fstats <- function(X, y, istart, iend, rcond_min) {
+    .Call('strucchange_sc_cpp_fstats', PACKAGE = 'strucchange', X, y, istart, iend, rcond_min)
+}
+
 #' Computation of recursive residuals in C++
 #' @param X design matrix
 #' @param y response vector
