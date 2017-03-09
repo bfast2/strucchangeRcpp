@@ -497,7 +497,7 @@ efp.matrix <- function(X,y,
            if(is.ts(y)) {
              if(NROW(y) == n) process <- ts(process, end = end(y), frequency = frequency(y))
            } 
-           retval$Q12 <- p$Q12
+           retval$Q12 <- Q12
            retval$type.name <- "RE test (recursive estimates test)"
            retval$lim.process <- "Brownian bridge"
          },
@@ -541,7 +541,7 @@ efp.matrix <- function(X,y,
              if(NROW(y) == n) process <- ts(process, end = time(y)[(n-floor(0.5 + nh/2))], frequency = frequency(y))
            } 
            retval$par <- h
-           retval$Q12 <- p$Q12
+           retval$Q12 <- Q12
            retval$type.name <- "ME test (moving estimates test)"
            retval$lim.process <- "Brownian bridge increments"
          },
