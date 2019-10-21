@@ -23,6 +23,15 @@ efp.formula <- function(formula, data = list(),
   }  
   
   n <- nrow(X)
+  
+  if (h > 1) {
+    if (h %% 1 != 0) {
+      warning("h has non-integer value > 1; will be rounded")
+      h = round(h)
+    }
+    h = h / n
+  }
+  
   if(dynamic)
   {
     Xnames <- colnames(X)

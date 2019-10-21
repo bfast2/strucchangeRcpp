@@ -26,9 +26,8 @@ conditions).}
      called from.}
   \item{type}{specifies which type of fluctuation process will be
      computed, the default is \code{"Rec-CUSUM"}. For details see below.}
-  \item{h}{a numeric from interval (0,1) specifying the bandwidth. determines the
-     size of the data window relative to sample size (for MOSUM and ME processes
-     only).}
+  \item{h}{bandwidth (for MOSUM and ME processes
+     only), either specified relative to the sample size as a numeric from interval (0,1),      or as an integer >= 1 determining the absolute bandwidth size (number of samples). }
   \item{dynamic}{logical. If \code{TRUE} the lagged observations are included as
      a regressor.}
   \item{rescale}{logical. If \code{TRUE} the estimates will be standardized by
