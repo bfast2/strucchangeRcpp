@@ -456,8 +456,9 @@ summary.breakpointsfull <- function(object, breaks = NULL,
   colnames(bp) <- rep("", breaks)
   rownames(bd) <- as.character(1:breaks)
   colnames(bd) <- rep("", breaks)
-  RSS <- rbind(RSS, BIC)
-  rownames(RSS) <- c("RSS", "BIC")
+  LWZ = LWZ.breakpointsfull(object)
+  RSS <- rbind(RSS, BIC, LWZ)
+  rownames(RSS) <- c("RSS", "BIC", "LWZ")
   RVAL <- list(breakpoints = bp,
                breakdates = bd,
 	       RSS = RSS,
@@ -477,7 +478,7 @@ print.summary.breakpointsfull <- function(x, digits = max(2, getOption("digits")
   rownames(bp) <- paste("m = ", rownames(bp), "  ", sep = "")
   rownames(bd) <- paste("m = ", rownames(bd), "  ", sep = "")
   RSS <- rbind(0:(ncol(RSS) - 1), format(RSS, digits = digits))
-  rownames(RSS) <- c("m","RSS", "BIC")
+  rownames(RSS) <- c("m","RSS", "BIC", "LWZ")
   colnames(RSS) <- rep("", breaks + 1)
 
   cat("\n\t Optimal (m+1)-segment partition: \n\n")
@@ -498,18 +499,19 @@ plot.breakpointsfull <- function(x, breaks = NULL, ...)
   invisible(rval)
 }
 
-plot.summary.breakpointsfull <- function(x, type = "b", col = c(1,4), legend = TRUE,
-  xlab = "Number of breakpoints", ylab = "", main = "BIC and Residual Sum of Squares", ...)
+plot.summary.breakpointsfull <- function(x, type = "b", col = c(1,4,5), legend = TRUE,
+  xlab = "Number of breakpoints", ylab = "", main = "BIC, LWZ and Residual Sum of Squares", ...)
 {
   breaks <- as.numeric(colnames(x$RSS))
   RSS <- x$RSS["RSS",]
   BIC <- x$RSS["BIC",]
-  col <- rep(col, length.out = 2)
-  plot(breaks, BIC, ylab = "", xlab = xlab, main = main, type = type, col = col[1], ...)
+  LWZ <- x$RSS["LWZ",]
+  plot(breaks, BIC, ylab = "", ylim=c(min(c(BIC, LWZ)), max(c(BIC, LWZ))), xlab = xlab, main = main, type = type, col = col[1], ...)
+  points(breaks, LWZ, col=col[3], type=type)
   onew <- getOption("new")
   par(new = TRUE)
   plot(breaks, RSS, type = type, axes = FALSE, col = col[2], xlab = "", ylab = "")
-  if(legend) legend("topright", c("BIC", "RSS"), lty = rep(1, 2), col = col, bty = "n")
+  if(legend) legend("topright", c("BIC", "RSS", "LWZ"), lty = rep(1, 2), col = col, bty = "n")
   axis(4)
   par(new = onew)
   invisible(x)
@@ -542,6 +544,11 @@ AIC.breakpointsfull <- function(object, breaks = NULL, ..., k = 2)
     RVAL <- c(RVAL, AIC(breakpoints(object, breaks = m), k = k))
   names(RVAL) <- breaks
   return(RVAL)
+}
+
+LWZ.breakpointsfull <- function(object, ...)
+{
+    return(AIC.breakpointsfull(object, ..., k=0.299 * log(object$nobs)^2.1))
 }
 
 
