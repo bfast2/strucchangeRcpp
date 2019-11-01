@@ -317,12 +317,21 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
 
 
 
-breakpoints.breakpointsfull <- function(obj, breaks = NULL, ...)
+breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS"), ...)
 {
-  if(is.null(breaks))
+  if (is.numeric(breaks))
   {
+    if (length(breaks) > 1)
+      stop("This function is for extracting a single break")
+    if (breaks %% 1 != 0)
+      stop("Please enter an integer number of breaks")
+  } else
+  {
+    breakstat <- match.arg(breaks)
     sbp <- summary(obj)
-    breaks <- which.min(sbp$RSS["BIC",]) - 1
+    # Select optimal number of breaks by minimising a given statistic
+    # Note: we might want to handle cases where the difference is < 2
+    breaks <- which.min(sbp$RSS[breakstat,]) - 1
   }
   if(breaks < 1)
   {
