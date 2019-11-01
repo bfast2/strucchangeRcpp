@@ -15,7 +15,7 @@ breakpoints.Fstats <- function(obj, ...)
   return(RVAL)
 }
 
-breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
+breakpoints.formula <- function(formula, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"),
                                 data = list(), hpc = c("none", "foreach"), ...)
 {
   mf <- model.frame(formula, data = data)
@@ -25,6 +25,7 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
   
   n <- nrow(X)
   k <- ncol(X)
+  breakstat <- NULL
   intercept_only <- isTRUE(all.equal(as.vector(X), rep(1L, n)))
   if(is.null(h)) h <- k + 1
   if(h < 1) h <- floor(n*h)
@@ -32,9 +33,16 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
     stop("minimum segment size must be greater than the number of regressors")
   if(h > floor(n/2))
     stop("minimum segment size must be smaller than half the number of observations")
-  if(is.null(breaks)) {
+  if (!is.numeric(breaks))
+  {
+    breakstat <- match.arg(breaks)
     breaks <- ceiling(n/h) - 2
   } else {
+    if (length(breaks) > 1)
+      stop("Argument 'breaks' takes a single number or method for optimal break estimation")
+    if (breaks %% 1 != 0)
+      stop("Please enter an integer number of breaks")
+
     if(breaks > ceiling(n/h) - 2) {
       breaks0 <- breaks
       breaks <- ceiling(n/h) - 2
@@ -168,15 +176,16 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
                call = match.call(),
                datatsp = datatsp)
   class(RVAL) <- c("breakpointsfull", "breakpoints")
-  RVAL$breakpoints <- breakpoints(RVAL)$breakpoints
+  RVAL$breakpoints <- breakpoints(RVAL, breaks=breakstat)$breakpoints
   return(RVAL)
 }
 
 
-breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "foreach"), ...)
+breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"), hpc = c("none", "foreach"), ...)
 {
   n <- nrow(X)
   k <- ncol(X)
+  breakstat <- NULL
   intercept_only <- isTRUE(all.equal(as.vector(X), rep(1L, n)))
   if(is.null(h)) h <- k + 1
   if(h < 1) h <- floor(n*h)
@@ -184,9 +193,16 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
     stop("minimum segment size must be greater than the number of regressors")
   if(h > floor(n/2))
     stop("minimum segment size must be smaller than half the number of observations")
-  if(is.null(breaks)) {
+  if (!is.numeric(breaks))
+  {
+    breakstat <- match.arg(breaks)
     breaks <- ceiling(n/h) - 2
   } else {
+    if (length(breaks) > 1)
+      stop("Argument 'breaks' takes a single number or method for optimal break estimation")
+    if (breaks %% 1 != 0)
+      stop("Please enter an integer number of breaks")
+      
     if(breaks > ceiling(n/h) - 2) {
       breaks0 <- breaks
       breaks <- ceiling(n/h) - 2
@@ -311,13 +327,13 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
                call = match.call(),
                datatsp = datatsp)
   class(RVAL) <- c("breakpointsfull", "breakpoints")
-  RVAL$breakpoints <- breakpoints(RVAL)$breakpoints
+  RVAL$breakpoints <- breakpoints(RVAL, breaks=breakstat)$breakpoints
   return(RVAL)
 }
 
 
 
-breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS"), ...)
+breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS", "all"), ...)
 {
   if (is.numeric(breaks))
   {
@@ -331,7 +347,10 @@ breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS"), ..
     sbp <- summary(obj)
     # Select optimal number of breaks by minimising a given statistic
     # Note: we might want to handle cases where the difference is < 2
-    breaks <- which.min(sbp$RSS[breakstat,]) - 1
+    if (breakstat == "all")
+      breaks <- ncol(sbp$breakpoints)
+    else
+      breaks <- which.min(sbp$RSS[breakstat,]) - 1
   }
   if(breaks < 1)
   {
