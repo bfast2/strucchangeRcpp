@@ -828,3 +828,61 @@ df.residual.breakpointsfull <- function(object, ...)
   names(rval) <- rownames(coef(object, ...))
   return(rval)
 }
+
+magnitude <- function(object, ...)
+{
+  UseMethod("magnitude")
+}
+
+# Returns a vector of magnitudes of change
+magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, breaks=NULL, component="trend")
+{
+    X <- object$X[,!colnames(object$X) %in% "(Intercept)"] # Do not take intercept
+    y <- object$y
+    if (interval < 1)
+        interval <- floor(length(y)*interval) # Convert to number of samples #TODO: Add handling of time
+    bp <- breakpoints(object, breaks=breaks)$breakpoints
+    nrbp <- length(bp)
+    if (!any(colnames(object$X) %in% component))
+        stop(paste("The specified component", component, "is missing"))
+    ti <- object$X[,component]
+    co  <- coef(object, breaks=breaks)
+    
+    Mag <- matrix(NA, nrbp, 6)
+    for (i in 1:nrbp) {
+        interval_start <- max(bp[i]-interval, 1)
+        interval_end   <- min(bp[i]+interval, nrow(X))
+        
+        # Fitted components over the interval range from the breakpoint
+        fit_prev <- co[i,   "(Intercept)"]
+        fit_next <- co[i+1, "(Intercept)"]
+        for (comp in component) {
+            fit_prev <- X[interval_start:interval_end,comp] * co[i,   comp] + fit_prev
+            fit_next <- X[interval_start:interval_end,comp] * co[i+1, comp] + fit_next
+        }
+        
+        # First fitted values before and after the break; for legacy reasons
+        Mag[i, 1] <- co[i,   "(Intercept)"]
+        Mag[i, 2] <- co[i+1, "(Intercept)"]
+        for (comp in component) {
+            Mag[i, 1] <- X[bp[i],  component] * co[i,   component] + Mag[i, 1]
+            Mag[i, 2] <- X[bp[i]+1,component] * co[i+1, component] + Mag[i, 2]
+        }
+        Mag[i, 3] <- Mag[i, 2] - Mag[i, 1]
+        Mag[i, 4] <- sqrt(mean((fit_next - fit_prev)^2))
+        Mag[i, 5] <- mean(abs(fit_next - fit_prev))
+        Mag[i, 6] <- mean(fit_next - fit_prev)
+        
+        colnames(Mag) = c("before", "after", "diff", "RMSE", "MAE", "ME")
+        
+    }
+    index <- which.max(abs(Mag[, 3]))
+    m.x <- rep(bp[index], 2)
+    m.y <- c(Mag[index, 1], Mag[index, 2]) #Magnitude position
+    Magnitude <- Mag[index, 3] # Magnitude of biggest change
+    Time <- bp[index]
+    
+    Result <- list(Mag=Mag, m.x=m.x, m.y=m.y, Magnitude=Magnitude, Time=Time)
+    class(Result) <- "magnitude"
+    return(Result)
+}
