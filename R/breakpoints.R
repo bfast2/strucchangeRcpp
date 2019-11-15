@@ -977,7 +977,7 @@ magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, br
         Mag[i, 5] <- mean(abs(fit_next - fit_prev))
         Mag[i, 6] <- mean(fit_next - fit_prev)
         
-        colnames(Mag) = c("before", "after", "diff", "RMSE", "MAE", "ME")
+        colnames(Mag) = c("before", "after", "diff", "RMSD", "MAD", "MD")
         
     }
     index <- which.max(abs(Mag[, 3]))
