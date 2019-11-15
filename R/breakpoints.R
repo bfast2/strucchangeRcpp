@@ -839,6 +839,8 @@ magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, br
 {
     X <- object$X[,!colnames(object$X) %in% "(Intercept)"] # Do not take intercept
     y <- object$y
+    # Also filter out the intercept from the components, in case users are lazy and put in all model names()
+    component <- component[!component %in% "(Intercept)"]
     if (interval < 1)
         interval <- floor(length(y)*interval) # Convert to number of samples #TODO: Add handling of time
     bp <- breakpoints(object, breaks=breaks)$breakpoints
@@ -865,8 +867,8 @@ magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, br
         Mag[i, 1] <- co[i,   "(Intercept)"]
         Mag[i, 2] <- co[i+1, "(Intercept)"]
         for (comp in component) {
-            Mag[i, 1] <- X[bp[i],  component] * co[i,   component] + Mag[i, 1]
-            Mag[i, 2] <- X[bp[i]+1,component] * co[i+1, component] + Mag[i, 2]
+            Mag[i, 1] <- X[bp[i],  comp] * co[i,   comp] + Mag[i, 1]
+            Mag[i, 2] <- X[bp[i]+1,comp] * co[i+1, comp] + Mag[i, 2]
         }
         Mag[i, 3] <- Mag[i, 2] - Mag[i, 1]
         Mag[i, 4] <- sqrt(mean((fit_next - fit_prev)^2))
