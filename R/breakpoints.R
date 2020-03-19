@@ -939,7 +939,7 @@ magnitude <- function(object, ...)
 # Returns a vector of magnitudes of change
 magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, breaks=NULL, component="trend")
 {
-    X <- object$X[,!colnames(object$X) %in% "(Intercept)"] # Do not take intercept
+    X <- object$X[,!colnames(object$X) %in% "(Intercept)", drop=FALSE] # Do not take intercept
     y <- object$y
     # Also filter out the intercept from the components, in case users are lazy and put in all model names()
     component <- component[!component %in% "(Intercept)"]
@@ -947,6 +947,8 @@ magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, br
         interval <- floor(length(y)*interval) # Convert to number of samples #TODO: Add handling of time
     bp <- breakpoints(object, breaks=breaks)$breakpoints
     nrbp <- length(bp)
+    if (nrbp < 2 && is.na(bp))
+        stop("There are no breakpoints to calculate magnitudes for!")
     if (!any(colnames(object$X) %in% component))
         stop(paste("The specified component", component, "is missing"))
     ti <- object$X[,component]
