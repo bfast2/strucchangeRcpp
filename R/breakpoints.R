@@ -395,7 +395,7 @@ breakdates <- function(obj, format.times = FALSE, ...)
 
 breakdates.breakpoints <- function(obj, format.times = FALSE, breaks = NULL, ...)
 {
-  if(inherits(obj, "breakpointsfull")) obj <- breakpoints(obj, breaks = breaks)
+  if(inherits(obj, "breakpointsfull") && !is.null(breaks)) obj <- breakpoints(obj, breaks = breaks)
   if(is.null(format.times)) format.times <- ((obj$datatsp[3] > 1) & (obj$datatsp[3] < obj$nobs))
 
   format.time <- function(timevec, freq)
@@ -453,7 +453,7 @@ summary.breakpointsfull <- function(object, breaks = NULL,
            rep(NA, breaks))
   names(RSS) <- as.character(0:breaks)
   bp <- breakpoints(object, breaks = breaks)
-  bd <- breakdates(bp, format.times = format.times)
+  bd <- breakdates(bp, format.times = format.times, breaks=breaks)
   RSS[breaks + 1] <- bp$RSS
   BIC[breaks + 1] <- AIC(bp, k = log(n))
   bp <- bp$breakpoints
