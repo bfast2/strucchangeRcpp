@@ -370,7 +370,7 @@ monitor.matrix <- function(obj, X, y, verbose=TRUE){
                            obj$computeEmpProc(newestims$coef, newestims$Qr12,k))
       stat <- obj$computeStat(obj$process)
       obj$statistic <- c(obj$statistic, stat)
-      if(!foundBreak & (stat > obj$border(k))){
+      if(!foundBreak & is.finite(stat) & (stat > obj$border(k))){
         foundBreak <- TRUE
         obj$breakpoint <- k
         if(verbose) cat("Break detected at observation #", k, "\n")
