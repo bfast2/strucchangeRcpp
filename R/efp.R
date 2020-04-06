@@ -343,7 +343,7 @@ efp.formula <- function(formula, data = list(),
   
   
   if(!is.ts(process))
-    process <- ts(process, start = 0, frequency = (NROW(process)-1))
+    process <- ts(process, start = 0, frequency = max(NROW(process)-1, 1))
   
   retval$process <- process
   
@@ -608,7 +608,7 @@ efp.matrix <- function(X,y,
   
   
   if(!is.ts(process))
-    process <- ts(process, start = 0, frequency = (NROW(process)-1))
+    process <- ts(process, start = 0, frequency = max(NROW(process)-1, 1))
   
   retval$process <- process
   
