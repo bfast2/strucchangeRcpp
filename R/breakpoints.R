@@ -226,12 +226,17 @@ breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS", "al
     RSS <- sum(apply(cbind(bp[-length(bp)]+1,bp[-1]), 1,
                      function(x) obj$RSS(x[1], x[2])))
   }
+  fvals = fitted(obj, breaks=breaks, bp=breakpoints)
+  mss = sum((fvals - mean(fvals))^2)
+  r.squared = mss/(mss + RSS)
   RVAL <- list(breakpoints = breakpoints,
                RSS = RSS,
                nobs = obj$nobs,
                nreg = obj$nreg,
                call = match.call(),
-               datatsp = obj$datatsp)
+               datatsp = obj$datatsp,
+               r.squared = r.squared,
+               MSS = mss)
   class(RVAL) <- "breakpoints"
   return(RVAL)
 }
@@ -302,7 +307,8 @@ lines.breakpoints <- function(x, breaks = NULL, lty = 2, ...)
 summary.breakpoints <- function(object, ...)
 {
   print(object)
-  cat(paste("\nRSS:", format(object$RSS),"\n"))
+  cat(paste("\nRSS:", format(object$RSS),"MSS:", format(object$MSS), "\n"))
+  cat(paste("Multiple R-squared:", format(object$r.squared),"\n"))
 }
 
 summary.breakpointsfull <- function(object, breaks = NULL,
@@ -312,12 +318,14 @@ summary.breakpointsfull <- function(object, breaks = NULL,
   if(is.null(breaks)) breaks <- ncol(object$RSS.table)/2
   n <- object$nobs
   RSS <- c(object$RSS(1, n), rep(NA, breaks))
+  R.sq <- c(breakpoints(object, breaks = 0)$r.squared, rep(NA, breaks))
   BIC <- c(n * (log(RSS[1]) + 1 - log(n) + log(2*pi)) + log(n) * (object$nreg + 1),
            rep(NA, breaks))
   names(RSS) <- as.character(0:breaks)
   bp <- breakpoints(object, breaks = breaks)
   bd <- breakdates(bp, format.times = format.times, breaks=breaks)
   RSS[breaks + 1] <- bp$RSS
+  R.sq[breaks + 1] <- bp$r.squared
   BIC[breaks + 1] <- AIC(bp, k = log(n))
   bp <- bp$breakpoints
   if(breaks > 1) {
@@ -338,6 +346,7 @@ summary.breakpointsfull <- function(object, breaks = NULL,
     bp[1,pos] <- bpm$breakpoints
     bd[1,pos] <- breakdates(bpm, format.times = format.times)
     RSS[m+1] <- bpm$RSS
+    R.sq[m+1] <- bpm$r.squared
     BIC[m+1] <- AIC(bpm, k = log(n))
   }} else {
     bp <- as.matrix(bp)
@@ -348,8 +357,8 @@ summary.breakpointsfull <- function(object, breaks = NULL,
   rownames(bd) <- as.character(1:breaks)
   colnames(bd) <- rep("", breaks)
   LWZ = LWZ.breakpointsfull(object)
-  RSS <- rbind(RSS, BIC, LWZ)
-  rownames(RSS) <- c("RSS", "BIC", "LWZ")
+  RSS <- rbind(RSS, BIC, LWZ, R.sq)
+  rownames(RSS) <- c("RSS", "BIC", "LWZ", "R.sq")
   RVAL <- list(breakpoints = bp,
                breakdates = bd,
 	       RSS = RSS,
@@ -369,7 +378,7 @@ print.summary.breakpointsfull <- function(x, digits = max(2, getOption("digits")
   rownames(bp) <- paste("m = ", rownames(bp), "  ", sep = "")
   rownames(bd) <- paste("m = ", rownames(bd), "  ", sep = "")
   RSS <- rbind(0:(ncol(RSS) - 1), format(RSS, digits = digits))
-  rownames(RSS) <- c("m","RSS", "BIC", "LWZ")
+  rownames(RSS) <- c("m","RSS", "BIC", "LWZ", "R.sq")
   colnames(RSS) <- rep("", breaks + 1)
 
   cat("\n\t Optimal (m+1)-segment partition: \n\n")
@@ -690,12 +699,14 @@ coef.breakpointsfull <- function(object, breaks = NULL, names = NULL, ...)
   return(rval)
 }
 
-fitted.breakpointsfull <- function(object, breaks = NULL, ...)
+fitted.breakpointsfull <- function(object, breaks = NULL, bp=NULL, ...)
 {
   X <- object$X
   y <- object$y
   n <- object$nobs
-  bp <- obp <- breakpoints(object, breaks = breaks)$breakpoints
+  if (is.null(bp))
+    bp <- obp <- breakpoints(object, breaks = breaks)$breakpoints
+  else obp <- bp
   if(any(is.na(bp))) {
     nbp <- 0
     bp <- c(0, n)
