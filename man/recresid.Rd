@@ -10,7 +10,7 @@
 }
 \usage{
 \method{recresid}{default}(x, y, start = ncol(x) + 1, end = nrow(x),
-  tol = sqrt(.Machine$double.eps)/ncol(x), \dots)
+  tol = sqrt(.Machine$double.eps)/ncol(x), qr.tol = 1e-7, \dots)
 \method{recresid}{formula}(formula, data = list(), \dots)
 \method{recresid}{lm}(x, data = list(), \dots)
 }
@@ -23,6 +23,8 @@
     range is selected.}
   \item{tol}{numeric. A relative tolerance for precision of recursive
     coefficient estimates, see details.}
+  \item{qr.tol}{numeric. The \code{tol}erance passed to \code{\link[stats]{lm.fit}}
+    for detecting linear dependencies.}
   \item{data}{an optional data frame containing the variables in the model. By
      default the variables are taken from the environment which \code{recresid} is
      called from. Specifying \code{data} might also be necessary when applying

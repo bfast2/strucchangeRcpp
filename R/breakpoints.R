@@ -1,3 +1,5 @@
+utils::globalVariables(c("i", "%dopar%"))
+
 breakpoints <- function(obj, ...)
 {
   UseMethod("breakpoints")
@@ -65,6 +67,10 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "a
       stop("Argument 'breaks' takes a single number or method for optimal break estimation")
     if (breaks %% 1 != 0)
       stop("Please enter an integer number of breaks")
+    if(breaks < 1) {
+      breaks <- 1
+      warning("number of breaks must be at least 1")
+    }
       
     if(breaks > ceiling(n/h) - 2) {
       breaks0 <- breaks
@@ -72,13 +78,17 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "a
       warning(sprintf("requested number of breaks = %i too large, changed to %i", breaks0, breaks))
     }
   }
-  
+
   hpc <- match.arg(hpc)
-  if(hpc == "foreach" && !requireNamespace("foreach")) {
-    warning("High perfomance computing (hpc) support with 'foreach' package is not available, foreach is not installed.")
-    hpc <- "none"
+  if(hpc == "foreach") {
+    if(requireNamespace("foreach")) {
+      `%dopar%` <- foreach::`%dopar%`
+    } else {
+      warning("High perfomance computing (hpc) support with 'foreach' package is not available, foreach is not installed.")    
+      hpc <- "none"
+    }
   }
-  
+
   ## compute ith row of the RSS diagonal matrix, i.e,
   ## the recursive residuals for segments starting at i = 1:(n-h+1)
   
@@ -105,7 +115,7 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "a
       ssr <- if(intercept_only) {
         (y[i:n] - cumsum(y[i:n])/(1L:(n-i+1L)))[-1L] * sqrt(1L + 1L/(1L:(n-i)))
       } else {
-        recresid(X[i:n,,drop = FALSE],y[i:n])
+      recresid(X[i:n,,drop = FALSE],y[i:n], ...)
       }
       c(rep(NA, k), cumsum(ssr^2))
     }
@@ -156,7 +166,7 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "a
   }
   
   ## extract optimal breaks
-  
+
   extract.breaks <- function(RSS.table, breaks)
   {
     if((breaks*2) > ncol(RSS.table)) stop("compute RSS.table with enough breaks before")
@@ -170,15 +180,16 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "a
     names(opt) <- NULL
     return(opt)
   }
-  
+
   opt <- extract.breaks(RSS.table, breaks)
   
-  if(is.ts(y)) {
-    if(NROW(y) == n) datatsp <- tsp(y)
-    else datatsp <- c(1/n, 1, n)      
-  } 
-  else datatsp <- c(1/n, 1, n)
-  
+  if(is.ts(y) && NROW(y) == n)
+  {
+    datatsp <- tsp(y)
+  } else {
+    datatsp <- c(1/n, 1, n)
+  }
+
   RVAL <- list(breakpoints = opt,
                RSS.table = RSS.table,
                RSS.triang = RSS.triang,
