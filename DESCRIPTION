@@ -1,23 +1,25 @@
 Package: strucchange
 Version: 1.5-9000
+Date: 2021-02-27
 Title: Testing, Monitoring, and Dating Structural Changes
-Authors@R: c(person(given = "Achim", family = "Zeileis", role = c("aut", "cre"), email = "Achim.Zeileis@R-project.org"),
+Authors@R: c(person(given = "Achim", family = "Zeileis", role = c("aut", "cre"), email = "Achim.Zeileis@R-project.org",
+                    comment = c(ORCID = "0000-0003-0918-3766")),
              person(given = "Friedrich", family = "Leisch", role = "aut", email = "Friedrich.Leisch@R-project.org"),
              person(given = "Kurt", family = "Hornik", role = "aut", email = "Kurt.Hornik@R-project.org"),
 	     person(given = "Christian", family = "Kleiber", role = "aut", email = "Christian.Kleiber@unibas.ch"),
 	     person(given = "Bruce", family = "Hansen", role = "ctb"),
 	     person(give = c("Edgar", "C."), family = "Merkle", role = "ctb"))
 Description: Testing, monitoring and dating structural changes in (linear)
-    regression models. strucchange features tests/methods from
-    the generalized fluctuation test framework as well as from
-    the F test (Chow test) framework. This includes methods to
-    fit, plot and test fluctuation processes (e.g., CUSUM, MOSUM,
-    recursive/moving estimates) and F statistics, respectively.
-    It is possible to monitor incoming data online using
-    fluctuation processes.
-    Finally, the breakpoints in regression models with structural
-    changes can be estimated together with confidence intervals.
-    Emphasis is always given to methods for visualizing the data.
+             regression models. strucchange features tests/methods from
+	     the generalized fluctuation test framework as well as from
+	     the F test (Chow test) framework. This includes methods to
+	     fit, plot and test fluctuation processes (e.g., CUSUM, MOSUM,
+	     recursive/moving estimates) and F statistics, respectively.
+             It is possible to monitor incoming data online using
+             fluctuation processes.
+             Finally, the breakpoints in regression models with structural
+             changes can be estimated together with confidence intervals.
+             Emphasis is always given to methods for visualizing the data.
 LazyData: yes
 LinkingTo: Rcpp, RcppArmadillo
 Depends:
@@ -36,9 +38,10 @@ Suggests:
 Imports:
     graphics,
     stats,
-    Rcpp (>= 0.12.7)
+    Rcpp (>= 0.12.7),
+    utils
 License: GPL-2 | GPL-3 + file LICENSE
-URL: https://github.com/appelmar/strucchange/
+URL: https://github.com/bfast2/strucchangeRcpp/
 Author: Achim Zeileis [aut, cre],
     Friedrich Leisch [aut],
     Kurt Hornik [aut],
