@@ -15,7 +15,7 @@ breakpoints.Fstats <- function(obj, ...)
   return(RVAL)
 }
 
-breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
+breakpoints.formula <- function(formula, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"),
                                 data = list(), hpc = c("none", "foreach"), ...)
 {
   mf <- model.frame(formula, data = data)
@@ -23,129 +23,11 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
   modelterms <- terms(formula, data = data)
   X <- model.matrix(modelterms, data = data)
   
+  RVAL <- breakpoints.matrix(X, y, h, breaks, hpc, ...)
+  
   n <- nrow(X)
-  k <- ncol(X)
-  intercept_only <- isTRUE(all.equal(as.vector(X), rep(1L, n)))
-  if(is.null(h)) h <- k + 1
-  if(h < 1) h <- floor(n*h)
-  if(h <= k)
-    stop("minimum segment size must be greater than the number of regressors")
-  if(h > floor(n/2))
-    stop("minimum segment size must be smaller than half the number of observations")
-  if(is.null(breaks)) {
-    breaks <- ceiling(n/h) - 2
-  } else {
-    if(breaks > ceiling(n/h) - 2) {
-      breaks0 <- breaks
-      breaks <- ceiling(n/h) - 2
-      warning(sprintf("requested number of breaks = %i too large, changed to %i", breaks0, breaks))
-    }
-  }
   
-  hpc <- match.arg(hpc)
-  if(hpc == "foreach" && !requireNamespace("foreach")) {
-    warning("High perfomance computing (hpc) support with 'foreach' package is not available, foreach is not installed.")
-    hpc <- "none"
-  }
-  
-  ## compute ith row of the RSS diagonal matrix, i.e,
-  ## the recursive residuals for segments starting at i = 1:(n-h+1)
-  
-  
-  if (getOption("strucchange.use_armadillo", FALSE)) {
-    res = .sc_cpp_construct_rss_table(y,X,n,h,breaks,intercept_only,sqrt(.Machine$double.eps)/ncol(X), getOption("strucchange.armadillo_rcond_min",sqrt(.Machine$double.eps)))
-    RSS.table = res$RSS.table
-    dimnames(RSS.table) = list(as.character(h:(n-h)), 
-                               as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
-    RSS.triang = res$RSS.triang
-    RSS <- function(i, j) .sc_cpp_rss(RSS.triang, i, j)
-    extend.RSS.table <- function(RSS.table, breaks) {
-      if (2*breaks > ncol(RSS.table)) {
-        RSS.table = .sc_cpp_extend_rss_table(rss_table = RSS.table, rss_triang = RSS.triang, n = n, h=h, breaks = breaks)
-        dimnames(RSS.table) = list(as.character(h:(n-h)), as.vector(rbind(paste("break", 1:breaks, sep = ""),paste("RSS", 1:breaks, sep = ""))))
-      }
-      RSS.table
-    }
-  }
-  else {
-    
-    RSSi <- function(i)
-    {
-      ssr <- if(intercept_only) {
-        (y[i:n] - cumsum(y[i:n])/(1L:(n-i+1L)))[-1L] * sqrt(1L + 1L/(1L:(n-i)))
-      } else {
-        recresid(X[i:n,,drop = FALSE],y[i:n])
-      }
-      c(rep(NA, k), cumsum(ssr^2))
-    }
-    
-    ## employ HPC support if available/selected
-    RSS.triang <- if(hpc == "none") sapply(1:(n-h+1), RSSi) else foreach::foreach(i = 1:(n-h+1)) %dopar% RSSi(i)
-    
-    ## function to extract the RSS(i,j) from RSS.triang
-    RSS <- function(i,j) RSS.triang[[i]][j - i + 1]
-    
-    ## compute optimal previous partner if observation i is the mth break
-    ## store results together with RSSs in RSS.table
-    
-    ## breaks = 1
-    
-    index <- h:(n-h)
-    break.RSS <- sapply(index, function(i) RSS(1,i))
-    
-    RSS.table <- cbind(index, break.RSS)
-    rownames(RSS.table) <- as.character(index)
-    
-    ## breaks >= 2
-    
-    extend.RSS.table <- function(RSS.table, breaks)
-    {
-      if((breaks*2) > ncol(RSS.table)) {
-        for(m in (ncol(RSS.table)/2 + 1):breaks)
-        {
-          my.index <- (m*h):(n-h)
-          my.RSS.table <- RSS.table[,c((m-1)*2 - 1, (m-1)*2)]
-          my.RSS.table <- cbind(my.RSS.table, NA, NA)
-          for(i in my.index)
-          {
-            pot.index <- ((m-1)*h):(i - h)
-            break.RSS <- sapply(pot.index, function(j) my.RSS.table[as.character(j), 2] + RSS(j+1,i))
-            opt <- which.min(break.RSS)
-            my.RSS.table[as.character(i), 3:4] <- c(pot.index[opt], break.RSS[opt])
-          }
-          RSS.table <- cbind(RSS.table, my.RSS.table[,3:4])
-        }
-        colnames(RSS.table) <- as.vector(rbind(paste("break", 1:breaks, sep = ""),
-                                               paste("RSS", 1:breaks, sep = "")))
-      }
-      return(RSS.table)
-    }
-    
-    RSS.table <- extend.RSS.table(RSS.table, breaks)
-    
-  }
-  
-  
-  
-  
-  ## extract optimal breaks
-  
-  extract.breaks <- function(RSS.table, breaks)
-  {
-    if((breaks*2) > ncol(RSS.table)) stop("compute RSS.table with enough breaks before")
-    index <- RSS.table[, 1, drop = TRUE]
-    break.RSS <- sapply(index, function(i) RSS.table[as.character(i),breaks*2] + RSS(i + 1, n))
-    opt <- index[which.min(break.RSS)]
-    if(breaks > 1) {
-      for(i in ((breaks:2)*2 - 1))
-        opt <- c(RSS.table[as.character(opt[1]),i], opt)
-    }
-    names(opt) <- NULL
-    return(opt)
-  }
-  
-  opt <- extract.breaks(RSS.table, breaks)
-  
+  # Not sure if this is any different from what the object returned already, but just in case...
   if(is.ts(data)) {
     if(NROW(data) == n) datatsp <- tsp(data)
     else datatsp <- c(1/n, 1, n)      
@@ -157,26 +39,16 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = NULL,
     else datatsp <- c(1/n, 1, n)
   }
   
-  RVAL <- list(breakpoints = opt,
-               RSS.table = RSS.table,
-               RSS.triang = RSS.triang,
-               RSS = RSS,
-               extract.breaks = extract.breaks,
-               extend.RSS.table = extend.RSS.table,
-               nobs = n,
-               nreg = k, y = y, X = X,
-               call = match.call(),
-               datatsp = datatsp)
-  class(RVAL) <- c("breakpointsfull", "breakpoints")
-  RVAL$breakpoints <- breakpoints(RVAL)$breakpoints
+  RVAL$datatsp <- datatsp
   return(RVAL)
 }
 
 
-breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "foreach"), ...)
+breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"), hpc = c("none", "foreach"), ...)
 {
   n <- nrow(X)
   k <- ncol(X)
+  breakstat <- NULL
   intercept_only <- isTRUE(all.equal(as.vector(X), rep(1L, n)))
   if(is.null(h)) h <- k + 1
   if(h < 1) h <- floor(n*h)
@@ -184,9 +56,16 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
     stop("minimum segment size must be greater than the number of regressors")
   if(h > floor(n/2))
     stop("minimum segment size must be smaller than half the number of observations")
-  if(is.null(breaks)) {
+  if (!is.numeric(breaks))
+  {
+    breakstat <- match.arg(breaks)
     breaks <- ceiling(n/h) - 2
   } else {
+    if (length(breaks) > 1)
+      stop("Argument 'breaks' takes a single number or method for optimal break estimation")
+    if (breaks %% 1 != 0)
+      stop("Please enter an integer number of breaks")
+      
     if(breaks > ceiling(n/h) - 2) {
       breaks0 <- breaks
       breaks <- ceiling(n/h) - 2
@@ -311,18 +190,30 @@ breakpoints.matrix <- function(X,y, h = 0.15, breaks = NULL, hpc = c("none", "fo
                call = match.call(),
                datatsp = datatsp)
   class(RVAL) <- c("breakpointsfull", "breakpoints")
-  RVAL$breakpoints <- breakpoints(RVAL)$breakpoints
+  RVAL$breakpoints <- breakpoints(RVAL, breaks=breakstat)$breakpoints
   return(RVAL)
 }
 
 
 
-breakpoints.breakpointsfull <- function(obj, breaks = NULL, ...)
+breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS", "all"), ...)
 {
-  if(is.null(breaks))
+  if (is.numeric(breaks))
   {
+    if (length(breaks) > 1)
+      stop("This function is for extracting a single break")
+    if (breaks %% 1 != 0)
+      stop("Please enter an integer number of breaks")
+  } else
+  {
+    breakstat <- match.arg(breaks)
     sbp <- summary(obj)
-    breaks <- which.min(sbp$RSS["BIC",]) - 1
+    # Select optimal number of breaks by minimising a given statistic
+    # Note: we might want to handle cases where the difference is < 2
+    if (breakstat == "all")
+      breaks <- ncol(sbp$breakpoints)
+    else
+      breaks <- which.min(sbp$RSS[breakstat,]) - 1
   }
   if(breaks < 1)
   {
@@ -367,7 +258,7 @@ breakdates <- function(obj, format.times = FALSE, ...)
 
 breakdates.breakpoints <- function(obj, format.times = FALSE, breaks = NULL, ...)
 {
-  if(inherits(obj, "breakpointsfull")) obj <- breakpoints(obj, breaks = breaks)
+  if(inherits(obj, "breakpointsfull") && !is.null(breaks)) obj <- breakpoints(obj, breaks = breaks)
   if(is.null(format.times)) format.times <- ((obj$datatsp[3] > 1) & (obj$datatsp[3] < obj$nobs))
 
   format.time <- function(timevec, freq)
@@ -425,7 +316,7 @@ summary.breakpointsfull <- function(object, breaks = NULL,
            rep(NA, breaks))
   names(RSS) <- as.character(0:breaks)
   bp <- breakpoints(object, breaks = breaks)
-  bd <- breakdates(bp, format.times = format.times)
+  bd <- breakdates(bp, format.times = format.times, breaks=breaks)
   RSS[breaks + 1] <- bp$RSS
   BIC[breaks + 1] <- AIC(bp, k = log(n))
   bp <- bp$breakpoints
@@ -456,8 +347,9 @@ summary.breakpointsfull <- function(object, breaks = NULL,
   colnames(bp) <- rep("", breaks)
   rownames(bd) <- as.character(1:breaks)
   colnames(bd) <- rep("", breaks)
-  RSS <- rbind(RSS, BIC)
-  rownames(RSS) <- c("RSS", "BIC")
+  LWZ = LWZ.breakpointsfull(object)
+  RSS <- rbind(RSS, BIC, LWZ)
+  rownames(RSS) <- c("RSS", "BIC", "LWZ")
   RVAL <- list(breakpoints = bp,
                breakdates = bd,
 	       RSS = RSS,
@@ -477,7 +369,7 @@ print.summary.breakpointsfull <- function(x, digits = max(2, getOption("digits")
   rownames(bp) <- paste("m = ", rownames(bp), "  ", sep = "")
   rownames(bd) <- paste("m = ", rownames(bd), "  ", sep = "")
   RSS <- rbind(0:(ncol(RSS) - 1), format(RSS, digits = digits))
-  rownames(RSS) <- c("m","RSS", "BIC")
+  rownames(RSS) <- c("m","RSS", "BIC", "LWZ")
   colnames(RSS) <- rep("", breaks + 1)
 
   cat("\n\t Optimal (m+1)-segment partition: \n\n")
@@ -498,18 +390,19 @@ plot.breakpointsfull <- function(x, breaks = NULL, ...)
   invisible(rval)
 }
 
-plot.summary.breakpointsfull <- function(x, type = "b", col = c(1,4), legend = TRUE,
-  xlab = "Number of breakpoints", ylab = "", main = "BIC and Residual Sum of Squares", ...)
+plot.summary.breakpointsfull <- function(x, type = "b", col = c(1,4,5), legend = TRUE,
+  xlab = "Number of breakpoints", ylab = "", main = "BIC, LWZ and Residual Sum of Squares", ...)
 {
   breaks <- as.numeric(colnames(x$RSS))
   RSS <- x$RSS["RSS",]
   BIC <- x$RSS["BIC",]
-  col <- rep(col, length.out = 2)
-  plot(breaks, BIC, ylab = "", xlab = xlab, main = main, type = type, col = col[1], ...)
+  LWZ <- x$RSS["LWZ",]
+  plot(breaks, BIC, ylab = "", ylim=c(min(c(BIC, LWZ)), max(c(BIC, LWZ))), xlab = xlab, main = main, type = type, col = col[1], ...)
+  points(breaks, LWZ, col=col[3], type=type)
   onew <- getOption("new")
   par(new = TRUE)
   plot(breaks, RSS, type = type, axes = FALSE, col = col[2], xlab = "", ylab = "")
-  if(legend) legend("topright", c("BIC", "RSS"), lty = rep(1, 2), col = col, bty = "n")
+  if(legend) legend("topright", c("BIC", "RSS", "LWZ"), lty = rep(1, 2), col = col, bty = "n")
   axis(4)
   par(new = onew)
   invisible(x)
@@ -542,6 +435,11 @@ AIC.breakpointsfull <- function(object, breaks = NULL, ..., k = 2)
     RVAL <- c(RVAL, AIC(breakpoints(object, breaks = m), k = k))
   names(RVAL) <- breaks
   return(RVAL)
+}
+
+LWZ.breakpointsfull <- function(object, ...)
+{
+    return(AIC.breakpointsfull(object, ..., k=0.299 * log(object$nobs)^2.1))
 }
 
 
@@ -929,4 +827,66 @@ df.residual.breakpointsfull <- function(object, ...)
   rval <- table(breakfactor(object, ...)) - object$nreg
   names(rval) <- rownames(coef(object, ...))
   return(rval)
+}
+
+magnitude <- function(object, ...)
+{
+  UseMethod("magnitude")
+}
+
+# Returns a vector of magnitudes of change
+magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, breaks=NULL, component="trend")
+{
+    X <- object$X[,!colnames(object$X) %in% "(Intercept)", drop=FALSE] # Do not take intercept
+    y <- object$y
+    # Also filter out the intercept from the components, in case users are lazy and put in all model names()
+    component <- component[!component %in% "(Intercept)"]
+    if (interval < 1)
+        interval <- floor(length(y)*interval) # Convert to number of samples #TODO: Add handling of time
+    bp <- breakpoints(object, breaks=breaks)$breakpoints
+    nrbp <- length(bp)
+    if (nrbp < 2 && is.na(bp))
+        stop("There are no breakpoints to calculate magnitudes for!")
+    if (!any(colnames(object$X) %in% component))
+        stop(paste("The specified component", component, "is missing"))
+    ti <- object$X[,component]
+    co  <- coef(object, breaks=breaks)
+    
+    Mag <- matrix(NA, nrbp, 6)
+    for (i in 1:nrbp) {
+        interval_start <- max(bp[i]-interval, 1)
+        interval_end   <- min(bp[i]+interval, nrow(X))
+        
+        # Fitted components over the interval range from the breakpoint
+        fit_prev <- co[i,   "(Intercept)"]
+        fit_next <- co[i+1, "(Intercept)"]
+        for (comp in component) {
+            fit_prev <- X[interval_start:interval_end,comp] * co[i,   comp] + fit_prev
+            fit_next <- X[interval_start:interval_end,comp] * co[i+1, comp] + fit_next
+        }
+        
+        # First fitted values before and after the break; for legacy reasons
+        Mag[i, 1] <- co[i,   "(Intercept)"]
+        Mag[i, 2] <- co[i+1, "(Intercept)"]
+        for (comp in component) {
+            Mag[i, 1] <- X[bp[i],  comp] * co[i,   comp] + Mag[i, 1]
+            Mag[i, 2] <- X[bp[i]+1,comp] * co[i+1, comp] + Mag[i, 2]
+        }
+        Mag[i, 3] <- Mag[i, 2] - Mag[i, 1]
+        Mag[i, 4] <- sqrt(mean((fit_next - fit_prev)^2))
+        Mag[i, 5] <- mean(abs(fit_next - fit_prev))
+        Mag[i, 6] <- mean(fit_next - fit_prev)
+        
+        colnames(Mag) = c("before", "after", "diff", "RMSD", "MAD", "MD")
+        
+    }
+    index <- which.max(abs(Mag[, 3]))
+    m.x <- rep(bp[index], 2)
+    m.y <- c(Mag[index, 1], Mag[index, 2]) #Magnitude position
+    Magnitude <- Mag[index, 3] # Magnitude of biggest change
+    Time <- bp[index]
+    
+    Result <- list(Mag=Mag, m.x=m.x, m.y=m.y, Magnitude=Magnitude, Time=Time)
+    class(Result) <- "magnitude"
+    return(Result)
 }
