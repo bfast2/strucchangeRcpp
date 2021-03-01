@@ -26,6 +26,8 @@ jobs:
           install.packages(c("remotes", "rcmdcheck"))
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
+      - name: Setup LaTeX
+        run: tlmgr install a4wide
       - name: Check
         run: |
           options(crayon.enabled = TRUE)
