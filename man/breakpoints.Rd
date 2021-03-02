@@ -121,8 +121,8 @@
   matrix and functions to extract an optimal segmentation. A \code{summary}
   of this object will give the breakpoints (and associated) breakdates
   for all segmentations up to the maximal number of breaks together
-  with the associated RSS and BIC. These will be plotted if \code{plot}
-  is applied and thus visualize the minimum BIC estimator of the number
+  with the associated RSS, BIC and LWZ. These will be plotted if \code{plot}
+  is applied and thus visualize the minimum BIC and LWZ estimators of the number
   of breakpoints. From an object of class \code{"breakpointsfull"} an
   arbitrary number of \code{breaks} (admissible by the minimum segment
   size \code{h}) can be extracted by another application of
@@ -151,7 +151,7 @@
   values and residuals of segmented models.
 
   The log likelihood as well as some information criteria can be computed
-  using the methods for the \code{\link{logLik}} and \code{\link{AIC}}. As
+  using the methods for the \code{\link{logLik}}, \code{\link{AIC}} and \code{LWZ}. As
   for linear models the log likelihood is computed on a normal model and
   the degrees of freedom are the number of regression coefficients multiplied
   by the number of segments plus the number of estimated breakpoints plus

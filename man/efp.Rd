@@ -42,6 +42,7 @@ conditions).}
     score-based tests where \code{\link{gefp}} should be used instead.)}
   \item{vcov}{a function to extract the covariance matrix for the coefficients
     of the fitted model (only for \code{"RE"} and \code{"ME"}).}
+  \item{\dots}{\emph{currently not used}.}
 }
 
 \details{If \code{type} is one of \code{"Rec-CUSUM"}, \code{"OLS-CUSUM"},

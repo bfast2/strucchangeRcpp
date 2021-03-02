@@ -41,11 +41,12 @@ mefp.formula <-
 
 
 mefp.matrix <-
-  function(X,y, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME", "fluctuation"),
+  function(obj, y, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME", "fluctuation"),
            h=1, alpha=0.05, functional = c("max", "range"),
            period=10, tolerance=.Machine$double.eps^0.5,
            CritvalTable=NULL, rescale=NULL, border=NULL, ...)
   {
+    X <- obj
     type <- match.arg(type)
     if(type == "fluctuation") type <- "RE"
     functional <- match.arg(functional)
@@ -127,8 +128,12 @@ mefp.efp <-
         }
         critval <- optimize(mreCritval, c(0,10), tol = tolerance)$minimum
 
-        computeEmpProc <- function(X, y)
+        computeEmpProc <- function(X = NULL, y = NULL, newcoef = NULL, Q = NULL, k = NULL)
         {
+          if (is.null(X) || is.null(y))
+            stop("OLS-CUSUM empirical process requires parameters X and y")
+          if (!is.null(newcoef) || !is.null(Q) || !is.null(k))
+            warning("Parameters newcoef, Q and k are not applicable to OLS-CUSUM, ignoring")
           as.vector(cumsum((y - X %*% histcoef)/(sigmahat*sqrt(histsize))))
         }
         computeEstims <- NULL
@@ -162,8 +167,12 @@ mefp.efp <-
                        paste(range(1-as.numeric(dntab[[3]])),
                              collapse="-")))
 
-        computeEmpProc <- function(X, y)
+        computeEmpProc <- function(X = NULL, y = NULL, newcoef = NULL, Q = NULL, k = NULL)
         {
+               if (is.null(X) || is.null(y))
+                 stop("OLS-MOSUM empirical process requires parameters X and y")
+               if (!is.null(newcoef) || !is.null(Q) || !is.null(k))
+                 warning("Parameters newcoef, Q and k are not applicable to OLS-MOSUM, ignoring")
                e <- as.vector(y - X %*% histcoef)
                process <- rep(0, nrow(X)-K+1)
                for(i in 0:(nrow(X)-K)) ## FIXME: cumsum - cumsum
@@ -211,7 +220,12 @@ mefp.efp <-
             retval
         }
 
-        computeEmpProc <- function(newcoef, Q, k){
+        computeEmpProc <- function(X = NULL, y = NULL, newcoef = NULL, Q = NULL, k = NULL)
+        {
+            if (is.null(newcoef))
+              stop("ME empirical process requires parameter newcoef")
+            if (!is.null(X) || !is.null(y))
+              warning("Parameters X and y are not applicable to ME, ignoring")
             if(is.null(Q)) Q <- Q12
             Q <- Q * K/(sigmahat*sqrt(histsize))
             t(Q %*%(newcoef-histcoef))
@@ -260,7 +274,12 @@ mefp.efp <-
             retval
         }
 
-        computeEmpProc <- function(newcoef, Q, k){
+        computeEmpProc <- function(X = NULL, y = NULL, newcoef = NULL, Q = NULL, k = NULL)
+        {
+            if (is.null(newcoef) || is.null(k))
+              stop("RE empirical process requires parameters newcoef and k")
+            if (!is.null(X) || !is.null(y))
+              warning("Parameters X and y are not applicable to RE, ignoring")
             if(is.null(Q)) Q <- Q12
             Q <- Q * k/(sigmahat*sqrt(histsize))
             t(Q %*%(newcoef-histcoef))
@@ -365,7 +384,7 @@ monitor.matrix <- function(obj, X, y, verbose=TRUE){
     for(k in (obj$last+1):nrow(X)){
       newestims <- obj$computeEstims(X,y,k)
       obj$process <- rbind(obj$process,
-                           obj$computeEmpProc(newestims$coef, newestims$Qr12,k))
+                           obj$computeEmpProc(newcoef = newestims$coef, Q = newestims$Qr12, k = k))
       stat <- obj$computeStat(obj$process)
       obj$statistic <- c(obj$statistic, stat)
       if(!foundBreak & is.finite(stat) & (stat > obj$border(k))){

@@ -40,6 +40,8 @@ export(
   "sctest",
   "boundary",
   "recresid",
+  "magnitude",
+  "LWZ",
 
 ## utilities
   ".Xinv0",
@@ -86,6 +88,8 @@ S3method("breakpoints", "Fstats")
 S3method("breakdates", "breakpoints")
 S3method("breakdates", "confint.breakpoints")
 
+S3method("magnitude", "breakpointsfull")
+
 S3method("mefp", "formula")
 S3method("mefp", "efp")
 S3method("mefp", "matrix")
@@ -117,10 +121,12 @@ S3method("lines", "mefp")
 S3method("print", "breakpoints")
 S3method("lines", "breakpoints")
 S3method("logLik", "breakpoints")
+S3method("LWZ", "breakpoints")
 S3method("summary", "breakpoints")
 
 S3method("logLik", "breakpointsfull")
 S3method("AIC", "breakpointsfull")
+S3method("LWZ", "breakpointsfull")
 S3method("summary", "breakpointsfull")
 S3method("plot", "breakpointsfull")
 S3method("confint", "breakpointsfull")

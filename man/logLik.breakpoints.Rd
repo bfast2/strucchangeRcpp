@@ -2,6 +2,9 @@
 \alias{logLik.breakpoints}
 \alias{logLik.breakpointsfull}
 \alias{AIC.breakpointsfull}
+\alias{LWZ}
+\alias{LWZ.breakpointsfull}
+\alias{LWZ.breakpoints}
 \title{Log Likelihood and Information Criteria for Breakpoints}
 
 \description{
@@ -12,16 +15,18 @@
 \usage{
 \method{logLik}{breakpointsfull}(object, breaks = NULL, ...)
 \method{AIC}{breakpointsfull}(object, breaks = NULL, ..., k = 2)
+\method{LWZ}{breakpointsfull}(object, \dots)
+\method{LWZ}{breakpoints}(object, \dots)
 }
 
 \arguments{
   \item{object}{an object of class \code{"breakpoints"} or \code{"breakpointsfull"}.}
   \item{breaks}{if \code{object} is of class \code{"breakpointsfull"} the
     number of breaks can be specified.}
-  \item{\dots}{\emph{currently not used}.}
+  \item{\dots}{for \code{LWZ}, parameters passed to \code{AIC.breakpointsfull}. Unused in \code{logLik} and \code{AIC}.}
   \item{k}{the penalty parameter to be used, the default \code{k = 2}
-    is the classical AIC, \code{k = log(n)} gives the BIC, if \code{n}
-    is the number of observations.}
+    is the classical AIC, \code{k = log(n)} gives the BIC, \code{k = 0.299 * log(n)^2.1} gives the LWZ,
+    if \code{n} is the number of observations.}
 }
 
 \details{
@@ -30,8 +35,8 @@
   by the number of segments plus the number of estimated breakpoints plus
   1 for the error variance.
 
-  If \code{AIC} is applied to an object of class \code{"breakpointsfull"}
-  \code{breaks} can be a vector of integers and the AIC for each corresponding
+  If \code{AIC} or \code{LWZ} is applied to an object of class \code{"breakpointsfull"}
+  \code{breaks} can be a vector of integers and the AIC or LWZ for each corresponding
   partition will be returned. By default the maximal number of breaks stored
   in the \code{object} is used. See below for an example.
 }
@@ -53,15 +58,18 @@ bp.nile <- breakpoints(Nile ~ 1)
 summary(bp.nile)
 plot(bp.nile)
 
-## BIC of partitions with0 to 5 breakpoints
+## BIC of partitions with 0 to 5 breakpoints
 plot(0:5, AIC(bp.nile, k = log(bp.nile$nobs)), type = "b")
 ## AIC
 plot(0:5, AIC(bp.nile), type = "b")
+## LWZ
+plot(0:5, LWZ(bp.nile), type = "b")
 
-## BIC, AIC, log likelihood of a single partition
+## BIC, AIC, LWZ, log likelihood of a single partition
 bp.nile1 <- breakpoints(bp.nile, breaks = 1)
 AIC(bp.nile1, k = log(bp.nile1$nobs))
 AIC(bp.nile1)
+LWZ(bp.nile1)
 logLik(bp.nile1)
 }
 
