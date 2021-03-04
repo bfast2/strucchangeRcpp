@@ -19,7 +19,7 @@
     tolerance = .Machine$double.eps^0.5, CritvalTable = NULL,
     rescale = NULL, border = NULL, ...)
     
-\method{mefp}{matrix}(X,y, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME",
+\method{mefp}{matrix}(obj, y, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME",
     "fluctuation"), h = 1, alpha = 0.05,
     functional = c("max", "range"), period = 10,
     tolerance = .Machine$double.eps^0.5, CritvalTable = NULL,
@@ -33,9 +33,12 @@ monitor(obj, data = NULL, verbose = TRUE)
 monitor.matrix(obj, X, y, verbose = TRUE)
 }
 \arguments{
-  \item{X, y, formula}{specification of the linear regression model:
-    either by a regressor matrix \code{X} and a response variable \code{y},
-    or by a \code{formula}.}
+  \item{formula}{specification of the linear regression model by a \code{formula}.}
+  \item{obj}{object of class \code{"efp"} (for \code{mefp}),
+    \code{"mefp"} (for \code{monitor}),
+    or the regression matrix \emph{X} (for \code{mefp.matrix}.}
+  \item{X}{regression matrix \emph{X}.}
+  \item{y}{response vector.}
   \item{data}{an optional data frame containing the variables in the model. By
      default the variables are taken from the environment which \code{efp} is
      called from.}
@@ -44,8 +47,6 @@ monitor.matrix(obj, X, y, verbose = TRUE)
   \item{h}{(only used for MOSUM/ME processes). A numeric scalar from interval
     (0,1) specifying the size of the data window relative to the sample
     size.}
-  \item{obj}{Object of class \code{"efp"} (for \code{mefp}) or
-    \code{"mefp"} (for \code{monitor}).}
   \item{alpha}{Significance level of the test, i.e., probability of
     type I error.}
   \item{functional}{Determines if maximum or range of parameter

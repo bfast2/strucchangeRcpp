@@ -25,39 +25,42 @@
 }
 
 \usage{
-\method{breakpoints}{formula}(formula, h = 0.15, breaks = NULL,
+\method{breakpoints}{formula}(formula, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"),
     data = list(), hpc = c("none", "foreach"), \dots)
-\method{breakpoints}{matrix}(X,y, h = 0.15, breaks = NULL, 
+\method{breakpoints}{matrix}(obj, y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"), 
     hpc = c("none", "foreach"), \dots)
-\method{breakpoints}{breakpointsfull}(obj, breaks = NULL, \dots)
+\method{breakpoints}{breakpointsfull}(obj, breaks = c("BIC", "LWZ", "RSS", "all"), \dots)
 \method{summary}{breakpointsfull}(object, breaks = NULL, sort = TRUE,
     format.times = NULL, \dots)
 \method{lines}{breakpoints}(x, breaks = NULL, lty = 2, \dots)
 
 \method{coef}{breakpointsfull}(object, breaks = NULL, names = NULL, \dots)
-\method{fitted}{breakpointsfull}(object, breaks = NULL, \dots)
+\method{fitted}{breakpointsfull}(object, breaks = NULL, bp = NULL, \dots)
 \method{residuals}{breakpointsfull}(object, breaks = NULL, \dots)
 \method{vcov}{breakpointsfull}(object, breaks = NULL, names = NULL,
     het.reg = TRUE, het.err = TRUE, vcov. = NULL, sandwich = TRUE, \dots)
 }
 
 \arguments{
+  \item{obj, object}{an object of class \code{"breakpointsfull"},
+    or (only in \code{breakpoints.matrix}) regression matrix \emph{X}.}
+  \item{y}{response vector.}
   \item{formula}{a symbolic description for the model in which breakpoints
     will be estimated.}
-  \item{X}{regression matrix.}
-  \item{y}{response vector.}
   \item{h}{minimal segment size either given as fraction relative to the
     sample size or as an integer giving the minimal number of observations
     in each segment.}
-  \item{breaks}{positive integer specifying the maximal number of breaks to be calculated.
-    By default the maximal number allowed by \code{h} is used.}
+  \item{breaks}{either a positive integer specifying the maximal number of breaks to be calculated,
+    or a string specifying the information criterion to use to automatically determine
+    the optimal number of breaks (see also \code{\link{logLik}}.
+    \code{"all"} means the maximal number allowed by \code{h} is used.
+    \code{NULL} is treated as the default of the \code{breakpoints} function (i.e. BIC).}
   \item{data}{an optional data frame containing the variables in the model. By
      default the variables are taken from the environment which \code{breakpoints} is
      called from.}
   \item{hpc}{a character specifying the high performance computing support.
     Default is \code{"none"}, can be set to \code{"foreach"}.}
   \item{\dots}{arguments passed to \code{\link{recresid}}.}
-  \item{obj, object}{an object of class \code{"breakpointsfull"}.}
   \item{sort}{logical. If set to \code{TRUE} \code{summary} tries to match
     the breakpoints from partitions with different numbers of breaks.}
   \item{format.times}{logical. If set to \code{TRUE} a vector of
@@ -67,6 +70,8 @@
   \item{lty}{line type.}
   \item{names}{a character vector giving the names of the segments. If of length
     1 it is taken to be a generic prefix, e.g. \code{"segment"}.}
+  \item{bp}{integer vector denoting the breakpoint indices for which to get the fitted values.
+    Default is to choose according to \code{breaks}. If both are given, \code{bp} takes precedence.}
   \item{het.reg}{logical. Should heterogeneous regressors be assumed? If set
     to \code{FALSE} the distribution of the regressors is assumed to be
     homogeneous over the segments.}
@@ -215,7 +220,7 @@ Bai J., Perron P. (1998), Estimating and Testing Linear Models With Multiple Str
 Bai J., Perron P. (2003), Computation and Analysis of Multiple Structural Change
   Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22.
 
-Zeileis A., Kleiber C., Kr�mer W., Hornik K. (2003), Testing and Dating of
+Zeileis A., Kleiber C., Kr\"{a}mer W., Hornik K. (2003), Testing and Dating of
   Structural Changes in Practice, \emph{Computational Statistics and Data Analysis},
   \bold{44}, 109-123. doi:10.1016/S0167-9473(03)00030-6.
 
@@ -240,9 +245,10 @@ lines(breakpoints(fs.nile))
 bp.nile <- breakpoints(Nile ~ 1)
 summary(bp.nile)
 
-## the BIC also chooses one breakpoint
+## the BIC and LWZ also choose one breakpoint
 plot(bp.nile)
 breakpoints(bp.nile)
+breakpoints(bp.nile, breaks="LWZ")
 
 ## fit null hypothesis model and model with 1 breakpoint
 fm0 <- lm(Nile ~ 1)
