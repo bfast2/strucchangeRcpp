@@ -1,6 +1,4 @@
-mefp <- function(X, ...) {
-  UseMethod("mefp")
-}
+mefp <- function(obj, ...) UseMethod("mefp")
 
 mefp.formula <-
     function(formula, type = c("OLS-CUSUM", "OLS-MOSUM", "RE", "ME", "fluctuation"),
@@ -168,7 +166,7 @@ mefp.efp <-
         {
                e <- as.vector(y - X %*% histcoef)
                process <- rep(0, nrow(X)-K+1)
-               for(i in 0:(nrow(X)-K))
+               for(i in 0:(nrow(X)-K)) ## FIXME: cumsum - cumsum
                {
                    process[i+1] <- sum(e[(i+1):(i+K)])
                }
@@ -307,9 +305,9 @@ mefp.efp <-
     obj
 }
 
-
-
 monitor <- function(obj, data=NULL, verbose=TRUE){
+
+    if(!is.na(obj$breakpoint)) return(TRUE)
     if(missing(data)){
         if(is.null(obj$data)){
             data <- list()
@@ -318,7 +316,7 @@ monitor <- function(obj, data=NULL, verbose=TRUE){
             data <- get(obj$data)
         }
     }
-  
+
     mf <- model.frame(obj$formula, data=data)
     y <- as.matrix(model.response(mf))
     modelterms <- terms(obj$formula, data = data)
@@ -382,7 +380,6 @@ monitor.matrix <- function(obj, X, y, verbose=TRUE){
   obj$call <- match.call()
   obj
 }
-
 
 print.mefp <- function(x, ...){
 
