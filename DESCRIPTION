@@ -48,3 +48,4 @@ Imports:
     utils
 License: GPL-2 | GPL-3
 URL: https://github.com/bfast2/strucchangeRcpp/
+BugReports: https://github.com/bfast2/strucchangeRcpp/issues
