@@ -18,7 +18,7 @@ arma::mat sc_cpp_rootmatrix(const arma::mat& X) {
   arma::mat SQRT_X = arma::sqrtmat_sympd(X) ;
   //bool success = arma::sqrtmat_sympd(SQRT_X,X);
   // if (!success) {
-  //   Environment env_sc("package:strucchange");
+  //   Environment env_sc("package:strucchangeRcpp");
   //   Function rootmatrix =  env_sc[".root.matrix"];
   //   NumericMatrix out = rootmatrix(X);
   //   return as<arma::mat>(out);

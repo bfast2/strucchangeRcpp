@@ -1,6 +1,6 @@
 import("stats", "graphics", "zoo", "sandwich")
 importFrom("utils", "globalVariables")
-useDynLib(strucchange)
+useDynLib(strucchangeRcpp)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
 export(

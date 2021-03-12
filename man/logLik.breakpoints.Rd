@@ -46,6 +46,10 @@
   the AIC respectively.
 }
 
+\references{
+Liu, J., Wu, S., & Zidek, J. V. (1997). On segmented multivariate regression. \emph{Statistica Sinica}, 497-525.
+}
+
 \seealso{\code{\link{breakpoints}}}
 
 \examples{

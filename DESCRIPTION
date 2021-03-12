@@ -1,12 +1,16 @@
-Package: strucchange
-Version: 1.5-9000
-Date: 2021-02-27
-Title: Testing, Monitoring, and Dating Structural Changes
-Authors@R: c(person(given = "Achim", family = "Zeileis", role = c("aut", "cre"), email = "Achim.Zeileis@R-project.org",
+Package: strucchangeRcpp
+Version: 1.5-3-1.0.0
+Date: 2021-03-12
+Title: Testing, Monitoring, and Dating Structural Changes: C++ Version
+Authors@R: c(person(given = "Dainius", family = "Masiliunas", role = c("aut", "cre"),
+             email = "pastas4@gmail.com", comment = c(ORCID = "0000-0001-5654-1277")),
+             person(given = "Achim", family = "Zeileis", role = c("aut"), email = "Achim.Zeileis@R-project.org",
                     comment = c(ORCID = "0000-0003-0918-3766")),
+             person(given = "Marius", family = "Appel", role = "aut", email = "marius.appel@uni-muenster.de"),
              person(given = "Friedrich", family = "Leisch", role = "aut", email = "Friedrich.Leisch@R-project.org"),
              person(given = "Kurt", family = "Hornik", role = "aut", email = "Kurt.Hornik@R-project.org"),
 	     person(given = "Christian", family = "Kleiber", role = "aut", email = "Christian.Kleiber@unibas.ch"),
+	     person(given = "Andrei", family = "Mirt", role = "ctb", email = "andrei.mirt@wur.nl"),
 	     person(given = "Bruce", family = "Hansen", role = "ctb"),
 	     person(give = c("Edgar", "C."), family = "Merkle", role = "ctb"))
 Description: Testing, monitoring and dating structural changes in (linear)
@@ -20,6 +24,8 @@ Description: Testing, monitoring and dating structural changes in (linear)
              Finally, the breakpoints in regression models with structural
              changes can be estimated together with confidence intervals.
              Emphasis is always given to methods for visualizing the data.
+             A fork of the base strucchange for improved speed and more
+             experimental features.
 LazyData: yes
 LinkingTo: Rcpp, RcppArmadillo
 Depends:
@@ -40,13 +46,5 @@ Imports:
     stats,
     Rcpp (>= 0.12.7),
     utils
-License: GPL-2 | GPL-3 + file LICENSE
+License: GPL-2 | GPL-3
 URL: https://github.com/bfast2/strucchangeRcpp/
-Author: Achim Zeileis [aut, cre],
-    Friedrich Leisch [aut],
-    Kurt Hornik [aut],
-    Christian Kleiber [aut],
-    Bruce Hansen [ctb],
-    Edgar C. Merkle [ctb]
-Maintainer: Achim Zeileis <Achim.Zeileis@R-project.org>
-
