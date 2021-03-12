@@ -1,0 +1,6 @@
+inst/doc/hyperref.cfg
+R/gbreakpoints.R
+R/Estrella.R
+^\.github$
+^LICENSE$
+^testout$
