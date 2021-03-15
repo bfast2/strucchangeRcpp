@@ -12,13 +12,13 @@ citEntry(entry="Article",
 	 volume       = "7",
 	 number       = "2",
 	 pages        = "1--38",
-         url          = "http://www.jstatsoft.org/v07/i02/",
+         url          = "https://www.jstatsoft.org/v07/i02/",
          
          textVersion = 
          paste("Achim Zeileis, Friedrich Leisch, Kurt Hornik and Christian Kleiber (2002).", 
                "strucchange: An R Package for Testing for Structural Change in Linear Regression Models.",
                "Journal of Statistical Software, 7(2), 1-38.",
-	       "URL http://www.jstatsoft.org/v07/i02/"),
+	       "URL https://www.jstatsoft.org/v07/i02/"),
 	 header = "To cite strucchange in publications use:"
 )
 

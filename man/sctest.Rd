@@ -44,7 +44,7 @@ in linear regression models and general parametric models are provided in
 Zeileis A., Leisch F., Hornik K., Kleiber C. (2002), \code{strucchange}:
 An R Package for Testing for Structural Change in Linear Regression Models,
 \emph{Journal of Statistical Software}, \bold{7}(2), 1-38.
-URL \url{http://www.jstatsoft.org/v07/i02/}.
+URL \url{https://www.jstatsoft.org/v07/i02/}.
 
 Zeileis A. (2006), Implementing a Class of Structural Change Tests: An
 Econometric Computing Approach. \emph{Computational Statistics & Data Analysis}, 

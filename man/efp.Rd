@@ -122,7 +122,7 @@ Ploberger W., Kr\"{a}mer W. (1992), The CUSUM test with OLS residuals,
 Zeileis A., Leisch F., Hornik K., Kleiber C. (2002), \code{strucchange}:
 An R Package for Testing for Structural Change in Linear Regression Models,
 \emph{Journal of Statistical Software}, \bold{7}(2), 1-38.
-URL \url{http://www.jstatsoft.org/v07/i02/}.
+URL \url{https://www.jstatsoft.org/v07/i02/}.
 
 Zeileis A. (2005), A Unified Approach to Structural Change Tests Based on
 ML Scores, F Statistics, and OLS Residuals. \emph{Econometric Reviews}, \bold{24},

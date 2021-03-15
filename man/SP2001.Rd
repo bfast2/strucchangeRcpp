@@ -12,7 +12,7 @@
  from 2001-07-31 to 2001-12-31 (103 observations) of all 500 S\&P
  stock prices. 
 }
-\source{Yahoo! Finance: \url{http://finance.yahoo.com/}.}
+\source{Yahoo! Finance: \url{https://finance.yahoo.com/}.}
 
 \references{
 Zeileis A., Leisch F., Kleiber C., Hornik K. (2005), Monitoring
