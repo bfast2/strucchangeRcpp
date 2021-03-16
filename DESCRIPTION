@@ -40,8 +40,7 @@ Suggests:
     foreach,
     lmtest,
     mvtnorm,
-    tseries,
-    bfast
+    tseries
 Imports:
     graphics,
     stats,
