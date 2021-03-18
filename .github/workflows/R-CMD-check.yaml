@@ -41,11 +41,11 @@ jobs:
       
       - uses: r-lib/actions/setup-tinytex@master
       - name: Setup LaTeX
-        run: tlmgr install a4wide ntgclass ae oberdiek hyperref graphics fancyvrb url natbib
+        run: tlmgr install a4wide ntgclass ae oberdiek hyperref graphics fancyvrb url natbib inconsolata
 
       - name: Query dependencies
         run: |
-          install.packages('remotes')
+          install.packages(c('remotes', 'bfast'))
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}

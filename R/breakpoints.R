@@ -25,7 +25,7 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = c("BIC", "LWZ", "RSS
   modelterms <- terms(formula, data = data)
   X <- model.matrix(modelterms, data = data)
   
-  RVAL <- breakpoints.matrix(X, y, h, breaks, hpc, ...)
+  RVAL <- breakpoints.matrix(X, y, h = h, breaks = breaks, hpc = hpc, ...)
   
   n <- nrow(X)
   
@@ -46,8 +46,9 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = c("BIC", "LWZ", "RSS
 }
 
 
-breakpoints.matrix <- function(X,y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"), hpc = c("none", "foreach"), ...)
+breakpoints.matrix <- function(obj, y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"), hpc = c("none", "foreach"), ...)
 {
+  X <- obj
   n <- nrow(X)
   k <- ncol(X)
   breakstat <- NULL
@@ -457,12 +458,20 @@ AIC.breakpointsfull <- function(object, breaks = NULL, ..., k = 2)
   return(RVAL)
 }
 
+LWZ <- function(object, ...)
+{
+    UseMethod("LWZ")
+}
+
 LWZ.breakpointsfull <- function(object, ...)
 {
     return(AIC.breakpointsfull(object, ..., k=0.299 * log(object$nobs)^2.1))
 }
 
-
+LWZ.breakpoints <- function(object, ...)
+{
+    return(AIC(object, k = 0.299 * log(object$nobs)^2.1))
+}
 
 pargmaxV <- function(x, xi = 1, phi1 = 1, phi2 = 1)
 {
@@ -857,12 +866,14 @@ magnitude <- function(object, ...)
 }
 
 # Returns a vector of magnitudes of change
-magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, breaks=NULL, component="trend")
+magnitude.breakpointsfull <- function(object, interval = 0.1, breaks = NULL, component = "trend", ...)
 {
     X <- object$X[,!colnames(object$X) %in% "(Intercept)", drop=FALSE] # Do not take intercept
     y <- object$y
     # Also filter out the intercept from the components, in case users are lazy and put in all model names()
     component <- component[!component %in% "(Intercept)"]
+    if (interval <= 0 || interval > length(y))
+        stop("Requested interval for magnitude computation out of valid range")
     if (interval < 1)
         interval <- floor(length(y)*interval) # Convert to number of samples #TODO: Add handling of time
     bp <- breakpoints(object, breaks=breaks)$breakpoints
@@ -871,7 +882,6 @@ magnitude.breakpointsfull <- function(object, method=c("RMSE"), interval=0.1, br
         stop("There are no breakpoints to calculate magnitudes for!")
     if (!any(colnames(object$X) %in% component))
         stop(paste("The specified component", component, "is missing"))
-    ti <- object$X[,component]
     co  <- coef(object, breaks=breaks)
     
     Mag <- matrix(NA, nrbp, 6)

@@ -13,7 +13,7 @@ February 2001 (seasonally adjusted at annual rates).}
                        (in billion US Dollars).}
  }
 }
-\source{\url{http://www.economagic.com/} }
+\source{\url{https://web.archive.org/web/20201205041942/http://www.economagic.com/} }
 \references{
 
 A. Zeileis, F. Leisch, K. Hornik, C. Kleiber (2002),
@@ -28,7 +28,6 @@ Regression Models.
 ###################################################
 ### chunk number 1: data
 ###################################################
-library("strucchange")
 data("USIncExp")
 plot(USIncExp, plot.type = "single", col = 1:2, ylab = "billion US$")
 legend(1960, max(USIncExp), c("income", "expenditures"),
@@ -38,7 +37,6 @@ legend(1960, max(USIncExp), c("income", "expenditures"),
 ###################################################
 ### chunk number 2: subset
 ###################################################
-library("strucchange")
 data("USIncExp")
 USIncExp2 <- window(USIncExp, start = c(1985,12))
 

@@ -122,7 +122,7 @@ plot.gefp <- function(x, alpha = 0.05, functional = maxBB, ...)
       "Brownian motion increments" = "BMI",
       "Brownian bridge" = "BB",
       "Brownian bridge increments" = "BBI")
-    functional <- get(paste(functional, lim.process, sep = ""), pos = "package:strucchange")
+    functional <- get(paste(functional, lim.process, sep = ""), pos = "package:strucchangeRcpp")
   }
   if(!("efpFunctional" %in% class(functional)))
     stop(paste(dQuote("functional"), "has to be of class", sQuote("efpFunctional")))
@@ -140,7 +140,7 @@ sctest.gefp <- function(x, functional = maxBB, ...)
       "Brownian motion increments" = "BMI",
       "Brownian bridge" = "BB",
       "Brownian bridge increments" = "BBI")
-    functional <- get(paste(functional, lim.process, sep = ""), pos = "package:strucchange")
+    functional <- get(paste(functional, lim.process, sep = ""), pos = "package:strucchangeRcpp")
   }
   if(!("efpFunctional" %in% class(functional)))
     stop(paste(dQuote("functional"), "has to be of class", sQuote("efpFunctional")))
@@ -362,8 +362,8 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
       ## can also use boundary argument: b(t) = critval * boundary(t)
     
           plotProcess <- function(x, alpha = 0.05, aggregate = TRUE,
-	    xlab = NULL, ylab = NULL, main = x$type.name, ylim = NULL,
-	    boundary = TRUE, ...)
+	    xlab = NULL, ylab = NULL, main = x$type.name, xlim = NULL, ylim = NULL,
+	    boundary = TRUE, statistic = TRUE, ...)
 	  {
             n <- x$nobs
 	    bound <- computeCritval(alpha = alpha, nproc = NCOL(x$process)) * boundary0(0:n/n)
@@ -389,7 +389,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
               if(is.null(ylab)) ylab <- "Empirical fluctuation process"
 	      if(is.null(ylim)) ylim <- range(c(range(proc), range(bound)))
 	    
-	      plot(proc, xlab = xlab, ylab = ylab, main = main, ylim = ylim, ...)
+	      plot(proc, xlab = xlab, ylab = ylab, main = main, xlim = xlim, ylim = ylim, ...)
 	      abline(0, 0)
 	      if(boundary) do.call("lines", c(list(bound), bargs))
 	    } else {
@@ -417,7 +417,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
       ## plot: first aggregate, add critval and statistic
 
           plotProcess <- function(x, alpha = 0.05, aggregate = TRUE,
-	    xlab = NULL, ylab = NULL, main = x$type.name, ylim = NULL,
+	    xlab = NULL, ylab = NULL, main = x$type.name, xlim = NULL, ylim = NULL,
 	    boundary = TRUE, statistic = TRUE, ...)
 	  {
             n <- x$nobs
@@ -446,7 +446,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
 	      if(is.null(ylab)) ylab <- "Empirical fluctuation process"
 	      if(is.null(ylim)) ylim <- range(c(range(proc), range(bound), range(stat)))
 	    
-	      plot(proc, xlab = xlab, ylab = ylab, main = main, ylim = ylim, ...)
+	      plot(proc, xlab = xlab, ylab = ylab, main = main, xlim = xlim, ylim = ylim, ...)
 	      abline(0, 0)
 	      if(boundary) do.call("lines", c(list(bound), bargs))
 	      if(statistic) lines(stat, lty = 2)
@@ -468,7 +468,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
 
         plotProcess <- function(x, alpha = 0.05, aggregate = TRUE,
 	    xlab = NULL, ylab = NULL, main = x$type.name, xlim = NULL, ylim = NULL,
-	    boundary = TRUE, ...)
+	    boundary = TRUE, statistic = TRUE, ...)
         {
           k <- NCOL(x$process)
           bound <- computeCritval(alpha = alpha, nproc = NCOL(x$process)) * boundary0(1:k/k)
@@ -525,8 +525,9 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
       ## lambda = lambda(x)
       ## functional is already the full functional lambda
       ## for plotting: just plot raw process
-      plotProcess <- function(x, alpha = 0.05, aggregate = FALSE,
-        xlab = NULL, ylab = NULL, main = x$type.name, ...)
+      plotProcess <- function(x, alpha = 0.05, aggregate = TRUE,
+        xlab = NULL, ylab = NULL, main = x$type.name, xlim = NULL, ylim = NULL,
+        boundary = TRUE, statistic = TRUE, ...)
       {
 	if(is.null(xlab)) {
 	  if(!is.null(x$order.name)) xlab <- x$order.name
@@ -537,7 +538,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
           lines(x, ...)
 	  abline(0, 0)
         }
-        plot(x$process, xlab = xlab, ylab = ylab, main = main, panel = panel, ...)
+        plot(x$process, xlab = xlab, ylab = ylab, main = main, panel = panel, xlim = xlim, ylim = ylim, ...)
       }  
     }
   }
@@ -607,4 +608,3 @@ simulateBMDist <- function(nobs = 1000, nrep = 5000, nproc = 1,
   
   return(rval)
 }
-

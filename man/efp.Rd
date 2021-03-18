@@ -42,6 +42,7 @@ conditions).}
     score-based tests where \code{\link{gefp}} should be used instead.)}
   \item{vcov}{a function to extract the covariance matrix for the coefficients
     of the fitted model (only for \code{"RE"} and \code{"ME"}).}
+  \item{\dots}{\emph{currently not used}.}
 }
 
 \details{If \code{type} is one of \code{"Rec-CUSUM"}, \code{"OLS-CUSUM"},
@@ -105,7 +106,7 @@ Hansen B. (1992), Testing for Parameter Instability in Linear Models,
 Hjort N.L., Koning A. (2002), Tests for Constancy of Model Parameters
 Over Time, \emph{Nonparametric Statistics}, \bold{14}, 113-132.
 
-Kr�mer W., Ploberger W., Alt R. (1988), Testing for structural change in
+Kr\"{a}mer W., Ploberger W., Alt R. (1988), Testing for structural change in
 dynamic models, \emph{Econometrica}, \bold{56}, 1355-1369.
 
 Kuan C.-M., Hornik K. (1995), The generalized fluctuation test: A
@@ -115,13 +116,13 @@ Kuan C.-M., Chen (1994), Implementing the fluctuation and moving estimates
 tests in dynamic econometric models, \emph{Economics Letters}, \bold{44},
 235-239.
 
-Ploberger W., Kr�mer W. (1992), The CUSUM test with OLS residuals,
+Ploberger W., Kr\"{a}mer W. (1992), The CUSUM test with OLS residuals,
 \emph{Econometrica}, \bold{60}, 271-285.
 
 Zeileis A., Leisch F., Hornik K., Kleiber C. (2002), \code{strucchange}:
 An R Package for Testing for Structural Change in Linear Regression Models,
 \emph{Journal of Statistical Software}, \bold{7}(2), 1-38.
-URL \url{http://www.jstatsoft.org/v07/i02/}.
+URL \url{https://www.jstatsoft.org/v07/i02/}.
 
 Zeileis A. (2005), A Unified Approach to Structural Change Tests Based on
 ML Scores, F Statistics, and OLS Residuals. \emph{Econometric Reviews}, \bold{24},

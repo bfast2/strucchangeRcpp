@@ -1,4 +1,4 @@
-library("strucchange")
+library("strucchangeRcpp")
 
 ## Nile data
 data("Nile")

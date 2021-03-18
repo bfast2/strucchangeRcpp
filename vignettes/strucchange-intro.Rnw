@@ -44,10 +44,10 @@ pdfview={XYZ null null null}%
 \begin{document}
 
 \SweaveOpts{engine=R,eps=FALSE}
-%\VignetteIndexEntry{strucchange: An R Package for Testing for Structural Change in Linear Regression Models}
-%\VignetteDepends{strucchange}
+%\VignetteIndexEntry{strucchangeRcpp: An R Package for Testing for Structural Change in Linear Regression Models}
+%\VignetteDepends{strucchangeRcpp}
 %\VignetteKeywords{structural change, CUSUM, MOSUM, recursive estimates, moving estimates, monitoring, R, S}
-%\VignettePackage{strucchange}
+%\VignettePackage{strucchangeRcpp}
 
 \title{\texttt{strucchange}: An \textsf{R}  Package for Testing for Structural
 Change in Linear Regression Models}
@@ -181,7 +181,7 @@ economic times series. Both time series are depicted in Figure
 \begin{figure}[htbp]
 \centering
 <<data,fig=TRUE,height=4,width=6,echo=FALSE,results=hide>>=
-library("strucchange")
+library("strucchangeRcpp")
 data("USIncExp")
 plot(USIncExp, plot.type = "single", col = 1:2, ylab = "billion US$")
 legend(1960, max(USIncExp), c("income", "expenditures"),
@@ -195,7 +195,7 @@ The data is
 available in the {\tt strucchange} package: it can be loaded and a
 suitable subset chosen by
 <<subset>>=
-library("strucchange")
+library("strucchangeRcpp")
 data("USIncExp")
 USIncExp2 <- window(USIncExp, start = c(1985,12))
 @

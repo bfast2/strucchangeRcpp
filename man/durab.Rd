@@ -30,6 +30,8 @@ Structural Change in Dynamic Econometric Models,
 }
 
 \examples{
+# Enable fast options
+options(strucchange.use_armadillo = TRUE)
 data("durab")
 ## use AR(1) model as in Hansen (2001) and Zeileis et al. (2005)
 durab.model <- y ~ lag

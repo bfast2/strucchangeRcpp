@@ -50,8 +50,8 @@ Population System in the Austrian Alps, forthcoming.
 Zeileis A., Veichtlbauer O. (2002), Policy Interventions
 Affecting Illegitimacy in Preindustrial Austria:
 A Structural Change Analysis, In R. Dutter (ed.),
-\emph{Festschrift 50 Jahre �sterreichische Statistische Gesellschaft}, 133-146,
-�sterreichische Statistische Gesellschaft.
+\emph{Festschrift 50 Jahre \"{O}sterreichische Statistische Gesellschaft}, 133-146,
+\"{O}sterreichische Statistische Gesellschaft.
 }
 
 \examples{

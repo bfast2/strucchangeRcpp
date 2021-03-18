@@ -1,3 +1,28 @@
+Changes in Version 1.5-3-1.0.0
+
+  o Initial release of the C++-optimised version of strucchange, strucchangeRcpp.
+  The optimisations are enabled by default, use
+  options(strucchange.use_armadillo = FALSE) to disable them.
+  
+  o Arguments of mefp.matrix and breakpoints.matrix now use `obj` as the name for
+  X, to be consistent with the generics. Avoid positional arguments, as they
+  differ per method.
+
+  o breakpoints(): Added the ability to select the optimal number of breakpoints
+  by LWZ or RSS via the argument `breaks`.
+  
+  o Added a function magnitude() for getting informaton about breakpoint
+  magnitude using a variety of statistics.
+  
+  o Added the R² statistic of the model fit to summary.breakpoints() and
+  summary.breakpointsfull(), available as an element `r.squared`.
+  
+  o breakpoints() called on a response with no variance returns no break instead of an error
+  instead of an error.
+  
+  o Fixed a bug where efp() with h = 1 would create an invalid time series and
+  fail with an error.
+
 Changes in Version 1.5-3
 
   o Fixups for R CMD check on different platforms.
