@@ -362,7 +362,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
       ## can also use boundary argument: b(t) = critval * boundary(t)
     
           plotProcess <- function(x, alpha = 0.05, aggregate = TRUE,
-	    xlab = NULL, ylab = NULL, main = x$type.name, xlim=NULL, ylim = NULL,
+	    xlab = NULL, ylab = NULL, main = x$type.name, xlim = NULL, ylim = NULL,
 	    boundary = TRUE, statistic = TRUE, ...)
 	  {
             n <- x$nobs
@@ -527,7 +527,7 @@ efpFunctional <- function(functional = list(comp = function(x) max(abs(x)), time
       ## for plotting: just plot raw process
       plotProcess <- function(x, alpha = 0.05, aggregate = TRUE,
         xlab = NULL, ylab = NULL, main = x$type.name, xlim = NULL, ylim = NULL,
-        boundary = TRUE, statistic=TRUE, ...)
+        boundary = TRUE, statistic = TRUE, ...)
       {
 	if(is.null(xlab)) {
 	  if(!is.null(x$order.name)) xlab <- x$order.name
@@ -608,4 +608,3 @@ simulateBMDist <- function(nobs = 1000, nrep = 5000, nproc = 1,
   
   return(rval)
 }
-

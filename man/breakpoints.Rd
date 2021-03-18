@@ -248,7 +248,7 @@ summary(bp.nile)
 ## the BIC and LWZ also choose one breakpoint
 plot(bp.nile)
 breakpoints(bp.nile)
-breakpoints(bp.nile, breaks="LWZ")
+breakpoints(bp.nile, breaks = "LWZ")
 
 ## fit null hypothesis model and model with 1 breakpoint
 fm0 <- lm(Nile ~ 1)

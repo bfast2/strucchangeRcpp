@@ -25,8 +25,8 @@
 \details{
   The breakpoint magnitude is estimated using several statistics:
   the difference (\emph{diff}) in the fitted value immediately \emph{before}
-  and \emph{after} the break, and the root mean squared deviance (\emph{RMSD}),
-  mean absolute deviance (\emph{MAD}) and mean deviance (\emph{MD}) between the
+  and \emph{after} the break, and the root mean squared deviation (\emph{RMSD}),
+  mean absolute deviation (\emph{MAD}) and mean deviation (\emph{MD}) between the
   fitted values of the model preceding the break extrapolated over \emph{interval}
   samples after the break, and vice versa. RMSD and MAD should be more robust
   estimators of magnitude compared to \emph{diff}.
@@ -52,7 +52,7 @@ trend <- 1:length(Nile)
 bp.nile <- breakpoints(Nile ~ trend)
 
 # The trend component is default, set "component" to the
-# name of your coviariate(s) if it is different
+# name of your coviariate(s), if it is different.
 magnitude(bp.nile)
 }
 

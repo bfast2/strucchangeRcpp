@@ -25,7 +25,7 @@ breakpoints.formula <- function(formula, h = 0.15, breaks = c("BIC", "LWZ", "RSS
   modelterms <- terms(formula, data = data)
   X <- model.matrix(modelterms, data = data)
   
-  RVAL <- breakpoints.matrix(X, y, h=h, breaks=breaks, hpc=hpc, ...)
+  RVAL <- breakpoints.matrix(X, y, h = h, breaks = breaks, hpc = hpc, ...)
   
   n <- nrow(X)
   
@@ -866,7 +866,7 @@ magnitude <- function(object, ...)
 }
 
 # Returns a vector of magnitudes of change
-magnitude.breakpointsfull <- function(object, interval=0.1, breaks=NULL, component="trend", ...)
+magnitude.breakpointsfull <- function(object, interval = 0.1, breaks = NULL, component = "trend", ...)
 {
     X <- object$X[,!colnames(object$X) %in% "(Intercept)", drop=FALSE] # Do not take intercept
     y <- object$y

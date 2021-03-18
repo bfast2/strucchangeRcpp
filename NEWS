@@ -17,7 +17,7 @@ Changes in Version 1.5-3-1.0.0
   o Added the R² statistic of the model fit to summary.breakpoints() and
   summary.breakpointsfull(), available as an element `r.squared`.
   
-  o breakpoints() called on a response with no variance now returns no break
+  o breakpoints() called on a response with no variance returns no break instead of an error
   instead of an error.
   
   o Fixed a bug where efp() with h = 1 would create an invalid time series and
