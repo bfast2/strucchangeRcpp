@@ -176,7 +176,7 @@
   If \code{hpc = "foreach"} is to be used, a parallel backend should be registered
   before. See \code{\link[foreach]{foreach}} for more information.
 }
-\section{value}{
+\value{
   An object of class \code{"breakpoints"} is a list with the following
   elements:
   \describe{

@@ -18,4 +18,7 @@
 \description{
   These are not to be called by the user.
 }
+\value{
+  Various, used internally and subject to change.
+}
 \keyword{internal}

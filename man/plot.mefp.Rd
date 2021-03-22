@@ -21,6 +21,7 @@
     plotted. }
   \item{main, ylab, ylim, ...}{high-level \code{\link{plot}} function parameters.}
 }
+\value{No return value, called for side effects.}
 \seealso{\code{\link{mefp}}}
 \examples{
 df1 <- data.frame(y=rnorm(300))

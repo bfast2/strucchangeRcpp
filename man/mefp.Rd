@@ -98,6 +98,17 @@ monitor.matrix(obj, X, y, verbose = TRUE)
   to \code{"fluctuation"} was used to specify it in earlier versions of
   strucchange. It still can be used now, but will be forced to \code{"RE"}
 }
+\value{
+  An object of class \code{mefp} that includes components such as:
+  \item{breakpoint}{index of the detected breakpoint, \code{NA} otherwise,}
+  \item{process}{a matrix denoting the coefficients of the empirical fluctuation process,}
+  \item{computeEmpProc}{a function to compute the empirical process
+    based on \code{newcoef}, \code{Q} and \code{k} for ME/RE and
+    \code{X} and \code{y} for OLS-MOSUM/OLS-CUSUM.}
+  \item{last}{number of observations,}
+  \item{type}{a string with the \code{type} of the process fitted,}
+  \item{alpha}{the significance level.}
+}
 \seealso{\code{\link{plot.mefp}}, \code{\link{boundary.mefp}}}
 \references{
   Leisch F., Hornik K., Kuan C.-M. (2000), Monitoring
