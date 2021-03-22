@@ -21,7 +21,8 @@ Description: A fast implementation with additional experimental features for
 	     the F test (Chow test) framework. This includes methods to
 	     fit, plot and test fluctuation processes (e.g., CUSUM, MOSUM,
 	     recursive/moving estimates) and F statistics, respectively.
-	     These methods are described in <doi:10.18637/jss.v007.i02>.
+	     These methods are described in Zeileis et al. (2002)
+	     <doi:10.18637/jss.v007.i02>.
              Finally, the breakpoints in regression models with structural
              changes can be estimated together with confidence intervals,
              and their magnitude as well as the model fit can be evaluated
