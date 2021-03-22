@@ -26,6 +26,7 @@
      statistics will also be plotted.}
  \item{xlab, ylab, ylim, ...}{high-level \code{\link{plot}} function parameters.}}
 
+\value{No return value, called for side effects.}
 \references{
 Andrews D.W.K. (1993), Tests for parameter instability and structural
 change with unknown change point, \emph{Econometrica}, \bold{61}, 821-856.

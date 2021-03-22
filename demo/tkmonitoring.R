@@ -21,38 +21,38 @@ if(require("tcltk"))
         dt <- tclvalue(data)
 	  switch(dt,
           "UK Seatbelt" = {
-	    seat.sub <<- window(seatbelt, start = c(1975,11), end = c(1983,1))
+	    seat.sub <- window(seatbelt, start = c(1975,11), end = c(1983,1))
             seat.efp <- efp(y ~ ylag1 + ylag12, data = seat.sub, type = tp, h = hh)
             if(bd > 0 & tp %in% c("OLS-CUSUM", "RE"))
 	      bd <- newborder <- function(k) 1.5778*k/seat.efp$nobs
 	    else
 	      bd <- NULL
 	    seat.mefp <- mefp(seat.efp, period = 2, border = bd)
-	    seat.sub <<- window(seatbelt, start = c(1975, 11))
+	    seat.sub <- window(seatbelt, start = c(1975, 11))
             seat.mon <- monitor(seat.mefp, verbose = FALSE)
 	    plot(seat.mon)
 	  },
 	  "M1" = {
-            M1 <<- historyM1
+            M1 <- historyM1
 	    m1.efp <- efp(dm ~ dy2 + dR + dR1 + dp + ecm.res + season, type = tp, h = hh, data = M1)
             if(bd > 0 & tp %in% c("OLS-CUSUM", "RE"))
 	      bd <- newborder <- function(k) 1.5778*k/m1.efp$nobs
 	    else
 	      bd <- NULL
 	    m1.mefp <- mefp(m1.efp, period = 2, border = bd)
-	    M1 <<- GermanM1
+	    M1 <- GermanM1
 	    m1.mon <- monitor(m1.mefp, verbose = FALSE)
 	    plot(m1.mon)
           },
           "US Durables" = {
-	    Durab <<- window(durab, start=1964, end = c(1979, 12))
+	    Durab <- window(durab, start=1964, end = c(1979, 12))
             durab.efp <- efp(y ~ lag, type = tp, h = hh, data = Durab)
             if(bd > 0 & tp %in% c("OLS-CUSUM", "RE"))
 	      bd <- newborder <- function(k) 1.5778*k/durab.efp$nobs
 	    else
 	      bd <- NULL
             durab.mefp <- mefp(durab.efp, period=2, border = bd)
-            Durab <<- window(durab, start=1964)
+            Durab <- window(durab, start=1964)
             durab.mon <- monitor(durab.mefp, verbose = FALSE)
             plot(durab.mon)
 	  })
