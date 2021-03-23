@@ -16,13 +16,13 @@ Authors@R: c(person(given = "Dainius", family = "Masiliunas", role = c("aut", "c
              person(given = c("Edgar", "C."), family = "Merkle", role = "ctb"))
 Description: A fast implementation with additional experimental features for
              testing, monitoring and dating structural changes in (linear)
-             regression models. strucchangeRcpp features tests/methods from
+             regression models. 'strucchangeRcpp' features tests/methods from
 	     the generalized fluctuation test framework as well as from
 	     the F test (Chow test) framework. This includes methods to
-	     fit, plot and test fluctuation processes (e.g., CUSUM, MOSUM,
-	     recursive/moving estimates) and F statistics, respectively.
-	     These methods are described in Zeileis et al. (2002)
-	     <doi:10.18637/jss.v007.i02>.
+             fit, plot and test fluctuation processes (e.g. cumulative/moving
+             sum, recursive/moving estimates) and F statistics, respectively.
+             These methods are described in Zeileis et al. (2002)
+             <doi:10.18637/jss.v007.i02>.
              Finally, the breakpoints in regression models with structural
              changes can be estimated together with confidence intervals,
              and their magnitude as well as the model fit can be evaluated
