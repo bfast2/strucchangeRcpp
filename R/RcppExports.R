@@ -2,15 +2,15 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .sc_cpp_rssi <- function(y, X, n, i, intercept_only, tol, rcond_min) {
-    .Call('_strucchange_sc_cpp_rssi', PACKAGE = 'strucchangeRcpp', y, X, n, i, intercept_only, tol, rcond_min)
+    .Call('_strucchangeRcpp_sc_cpp_rssi', PACKAGE = 'strucchangeRcpp', y, X, n, i, intercept_only, tol, rcond_min)
 }
 
 .sc_cpp_rss <- function(rss_triang, i, j) {
-    .Call('_strucchange_sc_cpp_rss', PACKAGE = 'strucchangeRcpp', rss_triang, i, j)
+    .Call('_strucchangeRcpp_sc_cpp_rss', PACKAGE = 'strucchangeRcpp', rss_triang, i, j)
 }
 
 .sc_cpp_extend_rss_table <- function(rss_table, rss_triang, n, h, breaks) {
-    .Call('_strucchange_sc_cpp_extend_rss_table', PACKAGE = 'strucchangeRcpp', rss_table, rss_triang, n, h, breaks)
+    .Call('_strucchangeRcpp_sc_cpp_extend_rss_table', PACKAGE = 'strucchangeRcpp', rss_table, rss_triang, n, h, breaks)
 }
 
 #' ..
@@ -20,7 +20,7 @@
 #' @param 
 #' @return 
 .sc_cpp_construct_rss_table <- function(y, X, n, h, breaks, intercept_only, tol, rcond_min) {
-    .Call('_strucchange_sc_cpp_construct_rss_table', PACKAGE = 'strucchangeRcpp', y, X, n, h, breaks, intercept_only, tol, rcond_min)
+    .Call('_strucchangeRcpp_sc_cpp_construct_rss_table', PACKAGE = 'strucchangeRcpp', y, X, n, h, breaks, intercept_only, tol, rcond_min)
 }
 
 #' Computes the empirical fluctuation process according to moving OLS estimates (type ME) 
@@ -30,7 +30,7 @@
 #' @param h bandwith of the process
 #' @return square root of X
 .sc_cpp_efp_process_me <- function(X, y, rescale, h) {
-    .Call('_strucchange_sc_cpp_efp_process_me', PACKAGE = 'strucchangeRcpp', X, y, rescale, h)
+    .Call('_strucchangeRcpp_sc_cpp_efp_process_me', PACKAGE = 'strucchangeRcpp', X, y, rescale, h)
 }
 
 #' Computes the empirical fluctuation process according to recursive OLS estimates (type RE) 
@@ -40,7 +40,7 @@
 #' @param h bandwith of the process
 #' @return square root of X
 .sc_cpp_efp_process_re <- function(X, y, rescale) {
-    .Call('_strucchange_sc_cpp_efp_process_re', PACKAGE = 'strucchangeRcpp', X, y, rescale)
+    .Call('_strucchangeRcpp_sc_cpp_efp_process_re', PACKAGE = 'strucchangeRcpp', X, y, rescale)
 }
 
 #' Compute F statistics for a data window
@@ -51,7 +51,7 @@
 #' @param rcond_min minimum reciprocal conditioning number to use armadillo::solve
 #' @return list with elements stats and sume2 where stats is a vector with F statistics and sume2 is the sum of squared residuals of the model using all data
 .sc_cpp_fstats <- function(X, y, istart, iend, rcond_min) {
-    .Call('_strucchange_sc_cpp_fstats', PACKAGE = 'strucchangeRcpp', X, y, istart, iend, rcond_min)
+    .Call('_strucchangeRcpp_sc_cpp_fstats', PACKAGE = 'strucchangeRcpp', X, y, istart, iend, rcond_min)
 }
 
 #' Computation of recursive residuals in C++
@@ -73,20 +73,20 @@ NULL
 #' @return vector containing the recursive residuals 
 #' @seealso \code{\link{recresid}} and \code{\link{recresid.default}}
 .sc_cpp_recresid <- function(X, y, start, end, tol, rcond_min) {
-    .Call('_strucchange_sc_cpp_recresid', PACKAGE = 'strucchangeRcpp', X, y, start, end, tol, rcond_min)
+    .Call('_strucchangeRcpp_sc_cpp_recresid', PACKAGE = 'strucchangeRcpp', X, y, start, end, tol, rcond_min)
 }
 
 #' Computes the square root of a symetric positive definite matrix
 #' @param X symetric positive definite matrix
 #' @return square root of X
 .sc_cpp_rootmatrix <- function(X) {
-    .Call('_strucchange_sc_cpp_rootmatrix', PACKAGE = 'strucchangeRcpp', X)
+    .Call('_strucchangeRcpp_sc_cpp_rootmatrix', PACKAGE = 'strucchangeRcpp', X)
 }
 
 #' Computes the square root of the Gramian matrix t(X) %*% X
 #' @param X a matrix
 #' @return square root of t(X) %*% X
 .sc_cpp_rootmatrix_cross <- function(X) {
-    .Call('_strucchange_sc_cpp_rootmatrix_cross', PACKAGE = 'strucchangeRcpp', X)
+    .Call('_strucchangeRcpp_sc_cpp_rootmatrix_cross', PACKAGE = 'strucchangeRcpp', X)
 }
 
