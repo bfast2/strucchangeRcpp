@@ -1,3 +1,7 @@
+Changes in Version 1.5-3-1.0.1
+
+  o Fix for build failures on Solaris and other architectures.
+
 Changes in Version 1.5-3-1.0.0
 
   o Initial release of the C++-optimised version of strucchange, strucchangeRcpp.
