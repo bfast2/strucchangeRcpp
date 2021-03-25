@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // sc_cpp_rssi
 arma::vec sc_cpp_rssi(const arma::vec& y, const arma::mat& X, int n, int i, const bool intercept_only, const double& tol, const double& rcond_min);
-RcppExport SEXP _strucchange_sc_cpp_rssi(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP iSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_rssi(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP iSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,7 +25,7 @@ END_RCPP
 }
 // sc_cpp_rss
 double sc_cpp_rss(const arma::mat& rss_triang, const int i, const int j);
-RcppExport SEXP _strucchange_sc_cpp_rss(SEXP rss_triangSEXP, SEXP iSEXP, SEXP jSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_rss(SEXP rss_triangSEXP, SEXP iSEXP, SEXP jSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,7 +38,7 @@ END_RCPP
 }
 // sc_cpp_extend_rss_table
 arma::mat sc_cpp_extend_rss_table(arma::mat& rss_table, const arma::mat& rss_triang, int n, int h, int breaks);
-RcppExport SEXP _strucchange_sc_cpp_extend_rss_table(SEXP rss_tableSEXP, SEXP rss_triangSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_extend_rss_table(SEXP rss_tableSEXP, SEXP rss_triangSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,7 +53,7 @@ END_RCPP
 }
 // sc_cpp_construct_rss_table
 List sc_cpp_construct_rss_table(const arma::vec& y, const arma::mat& X, int n, int h, int breaks, const bool intercept_only, const double& tol, const double& rcond_min);
-RcppExport SEXP _strucchange_sc_cpp_construct_rss_table(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_construct_rss_table(SEXP ySEXP, SEXP XSEXP, SEXP nSEXP, SEXP hSEXP, SEXP breaksSEXP, SEXP intercept_onlySEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -71,7 +71,7 @@ END_RCPP
 }
 // sc_cpp_efp_process_me
 List sc_cpp_efp_process_me(const arma::mat& X, const arma::vec& y, bool rescale, double h);
-RcppExport SEXP _strucchange_sc_cpp_efp_process_me(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP, SEXP hSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_efp_process_me(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,7 +85,7 @@ END_RCPP
 }
 // sc_cpp_efp_process_re
 List sc_cpp_efp_process_re(const arma::mat& X, const arma::vec& y, bool rescale);
-RcppExport SEXP _strucchange_sc_cpp_efp_process_re(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_efp_process_re(SEXP XSEXP, SEXP ySEXP, SEXP rescaleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -98,7 +98,7 @@ END_RCPP
 }
 // sc_cpp_fstats
 List sc_cpp_fstats(const arma::mat& X, const arma::vec& y, int istart, int iend, double& rcond_min);
-RcppExport SEXP _strucchange_sc_cpp_fstats(SEXP XSEXP, SEXP ySEXP, SEXP istartSEXP, SEXP iendSEXP, SEXP rcond_minSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_fstats(SEXP XSEXP, SEXP ySEXP, SEXP istartSEXP, SEXP iendSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -113,7 +113,7 @@ END_RCPP
 }
 // sc_cpp_recresid
 NumericVector sc_cpp_recresid(const arma::mat& X, const arma::vec& y, unsigned int start, unsigned int end, const double& tol, const double& rcond_min);
-RcppExport SEXP _strucchange_sc_cpp_recresid(SEXP XSEXP, SEXP ySEXP, SEXP startSEXP, SEXP endSEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_recresid(SEXP XSEXP, SEXP ySEXP, SEXP startSEXP, SEXP endSEXP, SEXP tolSEXP, SEXP rcond_minSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -129,7 +129,7 @@ END_RCPP
 }
 // sc_cpp_rootmatrix
 arma::mat sc_cpp_rootmatrix(const arma::mat& X);
-RcppExport SEXP _strucchange_sc_cpp_rootmatrix(SEXP XSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_rootmatrix(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -140,7 +140,7 @@ END_RCPP
 }
 // sc_cpp_rootmatrix_cross
 arma::mat sc_cpp_rootmatrix_cross(const arma::mat& X);
-RcppExport SEXP _strucchange_sc_cpp_rootmatrix_cross(SEXP XSEXP) {
+RcppExport SEXP _strucchangeRcpp_sc_cpp_rootmatrix_cross(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -151,20 +151,20 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_strucchange_sc_cpp_rssi", (DL_FUNC) &_strucchange_sc_cpp_rssi, 7},
-    {"_strucchange_sc_cpp_rss", (DL_FUNC) &_strucchange_sc_cpp_rss, 3},
-    {"_strucchange_sc_cpp_extend_rss_table", (DL_FUNC) &_strucchange_sc_cpp_extend_rss_table, 5},
-    {"_strucchange_sc_cpp_construct_rss_table", (DL_FUNC) &_strucchange_sc_cpp_construct_rss_table, 8},
-    {"_strucchange_sc_cpp_efp_process_me", (DL_FUNC) &_strucchange_sc_cpp_efp_process_me, 4},
-    {"_strucchange_sc_cpp_efp_process_re", (DL_FUNC) &_strucchange_sc_cpp_efp_process_re, 3},
-    {"_strucchange_sc_cpp_fstats", (DL_FUNC) &_strucchange_sc_cpp_fstats, 5},
-    {"_strucchange_sc_cpp_recresid", (DL_FUNC) &_strucchange_sc_cpp_recresid, 6},
-    {"_strucchange_sc_cpp_rootmatrix", (DL_FUNC) &_strucchange_sc_cpp_rootmatrix, 1},
-    {"_strucchange_sc_cpp_rootmatrix_cross", (DL_FUNC) &_strucchange_sc_cpp_rootmatrix_cross, 1},
+    {"_strucchangeRcpp_sc_cpp_rssi", (DL_FUNC) &_strucchangeRcpp_sc_cpp_rssi, 7},
+    {"_strucchangeRcpp_sc_cpp_rss", (DL_FUNC) &_strucchangeRcpp_sc_cpp_rss, 3},
+    {"_strucchangeRcpp_sc_cpp_extend_rss_table", (DL_FUNC) &_strucchangeRcpp_sc_cpp_extend_rss_table, 5},
+    {"_strucchangeRcpp_sc_cpp_construct_rss_table", (DL_FUNC) &_strucchangeRcpp_sc_cpp_construct_rss_table, 8},
+    {"_strucchangeRcpp_sc_cpp_efp_process_me", (DL_FUNC) &_strucchangeRcpp_sc_cpp_efp_process_me, 4},
+    {"_strucchangeRcpp_sc_cpp_efp_process_re", (DL_FUNC) &_strucchangeRcpp_sc_cpp_efp_process_re, 3},
+    {"_strucchangeRcpp_sc_cpp_fstats", (DL_FUNC) &_strucchangeRcpp_sc_cpp_fstats, 5},
+    {"_strucchangeRcpp_sc_cpp_recresid", (DL_FUNC) &_strucchangeRcpp_sc_cpp_recresid, 6},
+    {"_strucchangeRcpp_sc_cpp_rootmatrix", (DL_FUNC) &_strucchangeRcpp_sc_cpp_rootmatrix, 1},
+    {"_strucchangeRcpp_sc_cpp_rootmatrix_cross", (DL_FUNC) &_strucchangeRcpp_sc_cpp_rootmatrix_cross, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_strucchange(DllInfo *dll) {
+RcppExport void R_init_strucchangeRcpp(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

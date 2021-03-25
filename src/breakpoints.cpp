@@ -53,7 +53,7 @@ double sc_cpp_rss(const arma::mat& rss_triang, const int i, const int j) {
 arma::mat sc_cpp_extend_rss_table(arma::mat& rss_table, const arma::mat& rss_triang, int n, int h, int breaks) {
   // extend table
   int n_rows = rss_table.n_rows;
-  if (2*breaks <= rss_table.n_cols) {
+  if (2*breaks <=  int(rss_table.n_cols)) {
     return rss_table;
   }
   arma::mat na(n_rows,2); 

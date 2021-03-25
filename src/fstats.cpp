@@ -44,10 +44,7 @@ List sc_cpp_fstats(const arma::mat& X,const arma::vec& y,int istart, int iend, d
    // rss_all = arma::as_scalar(arma::sum(arma::square(y - X*coef)));
  }
   
-  uint32_t count_X1_arma = 0;
-  uint32_t count_X1_R = 0;
   uint32_t count_X2_arma = 0;
-  uint32_t count_X2_R = 0;
   
   for (int i = istart - 1; i <= iend - 1; ++i) {
     arma::mat X1 = X.submat(0,0,i,k-1);
