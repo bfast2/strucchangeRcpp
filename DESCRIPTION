@@ -1,5 +1,5 @@
 Package: strucchangeRcpp
-Version: 1.5-3-1.0.0.9000
+Version: 1.5-3-1.0.1
 Date: 2021-03-12
 Title: Testing, Monitoring, and Dating Structural Changes: C++ Version
 Authors@R: c(person(given = "Dainius", family = "Masiliunas", role = c("aut", "cre"),
