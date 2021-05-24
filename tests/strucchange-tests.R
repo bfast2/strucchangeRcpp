@@ -89,6 +89,9 @@ ols.mon2
 ## Grossarl data
 data("Grossarl")
 Grossarl.bp <- breakpoints(fraction ~ 1, data = Grossarl, h = 0.1)
-format(summary(Grossarl.bp), digits=0, nsmall=2)
+Grossarl.sm <- summary(Grossarl.bp)
+Grossarl.sm$breakpoints
+Grossarl.sm$breakdates
+round(Grossarl.sm$RSS, 2)
 confint(Grossarl.bp)
 
