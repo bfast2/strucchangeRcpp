@@ -52,7 +52,7 @@
     in each segment.}
   \item{breaks}{either a positive integer specifying the maximal number of breaks to be calculated,
     or a string specifying the information criterion to use to automatically determine
-    the optimal number of breaks (see also \code{\link{logLik}}.
+    the optimal number of breaks (see also \code{\link{logLik}}).
     \code{"all"} means the maximal number allowed by \code{h} is used.
     \code{NULL} is treated as the default of the \code{breakpoints} function (i.e. BIC).}
   \item{data}{an optional data frame containing the variables in the model. By
