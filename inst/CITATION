@@ -12,13 +12,7 @@ citEntry(entry="Article",
 	 volume       = "7",
 	 number       = "2",
 	 pages        = "1--38",
-         url          = "https://www.jstatsoft.org/v07/i02/",
-         
-         textVersion = 
-         paste("Achim Zeileis, Friedrich Leisch, Kurt Hornik and Christian Kleiber (2002).", 
-               "strucchange: An R Package for Testing for Structural Change in Linear Regression Models.",
-               "Journal of Statistical Software, 7(2), 1-38.",
-	       "URL https://www.jstatsoft.org/v07/i02/"),
+         doi          = "10.18637/jss.v007.i02",
 	 header = "To cite strucchange in publications use:"
 )
 
@@ -32,11 +26,6 @@ citEntry(entry="Article",
          year         = "2003",
 	 volume       = "44",
 	 pages        = "109--123",
-         
-         textVersion = 
-         paste("Achim Zeileis, Christian Kleiber, Walter Kraemer and Kurt Hornik (2003).", 
-               "Testing and Dating of Structural Changes in Practice.",
-               "Computational Statistics & Data Analysis, 44, 109-123."),
 	 header = "If methods related to breakpoints() are used also cite:"
 )
 
@@ -47,10 +36,5 @@ citEntry(entry        = "Article",
          year         = "2006",
 	 volume       = "50",
 	 pages        = "2987--3008",
-         
-         textVersion = 
-         paste("Achim Zeileis (2006).", 
-               "Implementing a Class of Structural Change Tests: An Econometric Computing Approach.",
-               "Computational Statistics & Data Analysis, 50, 2987-3008."),
          header = "If methods related to gefp() and efpFunctional() are used also cite:"
 )
