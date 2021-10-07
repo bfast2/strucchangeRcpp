@@ -4,3 +4,5 @@ R/Estrella.R
 ^\.github$
 ^LICENSE$
 ^testout$
+^doc$
+^Meta$

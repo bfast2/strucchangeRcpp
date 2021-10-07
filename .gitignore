@@ -40,3 +40,5 @@ vignettes/*.pdf
 src-x64/*
 src-i386/*
 *.orig
+/doc/
+/Meta/
