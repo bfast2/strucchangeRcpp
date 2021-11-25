@@ -1,3 +1,10 @@
+Changes in Version 1.5-3-1.0.4
+
+  o Replaced links in citations with DOIs (sync with upstream strucchange)
+  
+  o Debug symbols are now retained on macOS, increasing the binary size. Use
+  R CMD INSTALL --strip to decrease the size if you need to keep size low.
+
 Changes in Version 1.5-3-1.0.3
 
   o Fix for deprecation of digits = 0 in latest R version
