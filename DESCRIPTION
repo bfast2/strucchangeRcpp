@@ -1,5 +1,5 @@
 Package: strucchangeRcpp
-Version: 1.5-3-1.0.4
+Version: 1.5-3-1.0.4.9999
 Title: Testing, Monitoring, and Dating Structural Changes: C++ Version
 Authors@R: c(person(given = "Dainius", family = "Masiliunas", role = c("aut", "cre"),
              email = "pastas4@gmail.com", comment = c(ORCID = "0000-0001-5654-1277")),
