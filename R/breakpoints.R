@@ -202,7 +202,9 @@ breakpoints.matrix <- function(obj, y, h = 0.15, breaks = c("BIC", "LWZ", "RSS",
                call = match.call(),
                datatsp = datatsp)
   class(RVAL) <- c("breakpointsfull", "breakpoints")
-  RVAL$breakpoints <- breakpoints(RVAL, breaks=breakstat)$breakpoints
+  # If we are asked to find the optimal number of breakpoints according to a statistic, show the optimal one
+  if (!is.null(breakstat))
+    RVAL$breakpoints <- breakpoints(RVAL, breaks=breakstat)$breakpoints
   return(RVAL)
 }
 
