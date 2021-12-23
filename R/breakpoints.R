@@ -218,6 +218,8 @@ breakpoints.breakpointsfull <- function(obj, breaks = c("BIC", "LWZ", "RSS", "al
       stop("This function is for extracting a single break")
     if (breaks %% 1 != 0)
       stop("Please enter an integer number of breaks")
+  } else if (is.null(breaks)) {
+    breaks <- length(obj$breakpoints)
   } else
   {
     breakstat <- match.arg(breaks)
