@@ -30,7 +30,7 @@
 \method{breakpoints}{matrix}(obj, y, h = 0.15, breaks = c("BIC", "LWZ", "RSS", "all"), 
     hpc = c("none", "foreach"), \dots)
 \method{breakpoints}{breakpointsfull}(obj, breaks = c("BIC", "LWZ", "RSS", "all"), \dots)
-\method{summary}{breakpointsfull}(object, breaks = NULL, sort = TRUE,
+\method{summary}{breakpointsfull}(object, breaks = NULL, sort = NULL,
     format.times = NULL, \dots)
 \method{lines}{breakpoints}(x, breaks = NULL, lty = 2, \dots)
 
@@ -62,7 +62,8 @@
     Default is \code{"none"}, can be set to \code{"foreach"}.}
   \item{\dots}{arguments passed to \code{\link{recresid}}.}
   \item{sort}{logical. If set to \code{TRUE} \code{summary} tries to match
-    the breakpoints from partitions with different numbers of breaks.}
+    the breakpoints from partitions with different numbers of breaks.
+    The default tries to sort if a suitable matching can be found.}
   \item{format.times}{logical. If set to \code{TRUE} a vector of
     strings with the formatted breakdates is printed. See \code{\link{breakdates}}
     for more information.}
@@ -220,7 +221,7 @@ Bai J., Perron P. (1998), Estimating and Testing Linear Models With Multiple Str
 Bai J., Perron P. (2003), Computation and Analysis of Multiple Structural Change
   Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22.
 
-Zeileis A., Kleiber C., Kr\"{a}mer W., Hornik K. (2003), Testing and Dating of
+Zeileis A., Kleiber C., Krämer W., Hornik K. (2003), Testing and Dating of
   Structural Changes in Practice, \emph{Computational Statistics and Data Analysis},
   \bold{44}, 109-123. doi:10.1016/S0167-9473(03)00030-6.
 

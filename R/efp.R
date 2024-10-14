@@ -826,7 +826,7 @@ pvalue.efp <- function(x, lim.process, alt.boundary, functional = "max", h = NUL
 
     "maxL2" = {
       if(k > 25) {
-        warning("number of regressors > 25, critical values for 25 regressors used")
+        warning("number of parameters > 25, critical values for 25 parameters used")
         k <- 25
       }
       critval <- get("sc.maxL2")[as.character(k), ]
@@ -835,7 +835,7 @@ pvalue.efp <- function(x, lim.process, alt.boundary, functional = "max", h = NUL
 
     "meanL2" = {
       if(k > 25) {
-        warning("number of regressors > 25, critical values for 25 regressors used")
+        warning("number of parameters > 25, critical values for 25 parameters used")
         k <- 25
       }
       critval <- get("sc.meanL2")[as.character(k), ]

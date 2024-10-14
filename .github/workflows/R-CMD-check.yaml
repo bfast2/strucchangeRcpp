@@ -39,7 +39,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
       
-      - uses: r-lib/actions/setup-tinytex@master
+      - uses: r-lib/actions/setup-tinytex@v2
       - name: Setup LaTeX
         run: tlmgr install a4wide ntgclass ae oberdiek hyperref graphics fancyvrb url natbib inconsolata
       

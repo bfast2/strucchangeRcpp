@@ -1,11 +1,13 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-suse-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -15,21 +17,22 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> pkgname <- "strucchange"
+> pkgname <- "strucchangeRcpp"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
-> library('strucchange')
+> library('strucchangeRcpp')
 Loading required package: zoo
 
-Attaching package: 'zoo'
+Attaching package: ‘zoo’
 
-The following objects are masked from 'package:base':
+The following objects are masked from ‘package:base’:
 
     as.Date, as.Date.numeric
 
 Loading required package: sandwich
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
 > cleanEx()
 > nameEx("BostonHomicide")
 > ### * BostonHomicide
@@ -75,7 +78,7 @@ populationBM  1  14.364 14.3642  3.7961 0.05576 .
 season       11  47.254  4.2959  1.1353 0.34985  
 Residuals    64 242.174  3.7840                  
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > ## as GLM
 > fmA1 <- glm(homicides ~ populationBM + season, family = poisson)
 > anova(fmA1, test = "Chisq")
@@ -93,7 +96,7 @@ NULL                            76    115.649
 populationBM  1   4.9916        75    110.657  0.02547 *
 season       11  18.2135        64     92.444  0.07676 .
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > 
 > ## model B & C
 > fmB <- lm(homicides ~ populationBM + season + ahomicides25)
@@ -152,7 +155,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 	 Optimal 2-segment partition: 
 
 Call:
-breakpoints.formula(formula = I(djia^2) ~ 1)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
 89 
@@ -244,7 +247,6 @@ exp.F = 6.4247, p-value = 0.008093
 > flush(stderr()); flush(stdout())
 > 
 > ### Encoding: UTF-8
-> 
 > ### Name: GermanM1
 > ### Title: German M1 Money Demand
 > ### Aliases: GermanM1 historyM1 monitorM1
@@ -288,7 +290,7 @@ Break detected at observation # 135
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = LTW.model, data = GermanM1)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                        
@@ -307,10 +309,12 @@ m = 4   1967(3) 1972(4) 1978(3)         1990(3)
 m = 5   1967(3) 1972(4) 1978(3) 1985(2) 1990(3)
 
 Fit:
-                                                                     
-m   0          1          2          3          4          5         
-RSS  3.683e-02  1.916e-02  1.522e-02  1.301e-02  1.053e-02  9.198e-03
-BIC -6.974e+02 -7.296e+02 -7.025e+02 -6.653e+02 -6.356e+02 -5.952e+02
+                                                                      
+m    0          1          2          3          4          5         
+RSS   3.683e-02  1.916e-02  1.522e-02  1.301e-02  1.053e-02  9.198e-03
+BIC  -6.974e+02 -7.296e+02 -7.025e+02 -6.653e+02 -6.356e+02 -5.952e+02
+LWZ  -6.539e+02 -6.426e+02 -5.721e+02 -4.913e+02 -4.181e+02 -3.342e+02
+R.sq  9.116e-01  9.540e-01  9.635e-01  9.688e-01  9.747e-01  9.779e-01
 > plot(bp)
 > 
 > plot(fs)
@@ -364,7 +368,7 @@ BIC -6.974e+02 -7.296e+02 -7.025e+02 -6.653e+02 -6.356e+02 -5.952e+02
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = fraction ~ 1, h = 0.1, data = Grossarl)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                                     
@@ -389,14 +393,18 @@ m = 7   1734 1754 1779 1800 1821      1856 1878
 m = 8   1734 1754 1778 1798 1818 1838 1858 1878
 
 Fit:
-                                                                         
-m   0         1         2         3         4         5         6        
-RSS    1.1088    0.8756    0.6854    0.6587    0.6279    0.6019    0.5917
-BIC -460.8402 -497.4625 -535.8459 -533.1857 -532.1789 -530.0501 -522.8510
-                       
-m   7         8        
-RSS    0.5934    0.6084
-BIC -511.7017 -496.0924
+                                                                      
+m    0          1          2          3          4          5         
+RSS   1.109e+00  8.756e-01  6.854e-01  6.587e-01  6.279e-01  6.019e-01
+BIC  -4.608e+02 -4.975e+02 -5.358e+02 -5.332e+02 -5.322e+02 -5.301e+02
+LWZ  -4.516e+02 -4.790e+02 -5.081e+02 -4.962e+02 -4.860e+02 -4.746e+02
+R.sq  5.697e-32  2.103e-01  3.818e-01  4.059e-01  4.337e-01  4.572e-01
+                                     
+m    6          7          8         
+RSS   5.917e-01  5.934e-01  6.084e-01
+BIC  -5.229e+02 -5.117e+02 -4.961e+02
+LWZ  -4.582e+02 -4.378e+02 -4.130e+02
+R.sq  4.663e-01  4.648e-01  4.513e-01
 > ## RSS, BIC, AIC
 > plot(bp)
 > plot(0:8, AIC(bp), type = "b")
@@ -448,7 +456,7 @@ BIC -511.7017 -496.0924
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = marriages ~ 1, h = 0.1, data = Grossarl)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                                    
@@ -473,10 +481,18 @@ m = 7        1738 1761 1794 1814 1835 1855 1875
 m = 8   1720 1740 1761 1794 1814 1835 1855 1875
 
 Fit:
-                                                
-m   0    1    2    3    4    5    6    7    8   
-RSS 3832 3059 2863 2723 2671 2634 2626 2626 2645
-BIC 1169 1134 1132 1132 1139 1147 1157 1167 1179
+                                                                          
+m    0         1         2         3         4         5         6        
+RSS  3.832e+03 3.059e+03 2.863e+03 2.723e+03 2.671e+03 2.634e+03 2.626e+03
+BIC  1.169e+03 1.134e+03 1.132e+03 1.132e+03 1.139e+03 1.147e+03 1.157e+03
+LWZ  1.178e+03 1.153e+03 1.159e+03 1.169e+03 1.185e+03 1.202e+03 1.221e+03
+R.sq 1.453e-30 2.015e-01 2.528e-01 2.894e-01 3.030e-01 3.126e-01 3.147e-01
+                        
+m    7         8        
+RSS  2.626e+03 2.645e+03
+BIC  1.167e+03 1.179e+03
+LWZ  1.241e+03 1.262e+03
+R.sq 3.148e-01 3.097e-01
 > ## RSS, BIC, AIC
 > plot(bp)
 > plot(0:8, AIC(bp), type = "b")
@@ -533,7 +549,7 @@ BIC 1169 1134 1132 1132 1139 1147 1157 1167 1179
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = dp ~ dp1, h = 8, data = uk)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                
@@ -548,10 +564,12 @@ m = 2        1967 1975
 m = 3   1956 1967 1975
 
 Fit:
-                                               
-m   0          1          2          3         
-RSS    0.03068    0.02672    0.01838    0.01786
-BIC -162.34174 -156.80265 -160.70385 -150.78479
+                                                
+m    0          1          2          3         
+RSS     0.03068    0.02672    0.01838    0.01786
+BIC  -162.34174 -156.80265 -160.70385 -150.78479
+LWZ  -159.50019 -151.11954 -152.17918 -139.41856
+R.sq    0.63764    0.68441    0.78292    0.78906
 > 
 > ## fit segmented model with three breaks
 > fac.inf <- breakfactor(bp.inf, breaks = 2, label = "seg")
@@ -574,7 +592,7 @@ fac.infseg1:dp1  0.274012   0.269892   1.015   0.3171
 fac.infseg2:dp1  1.343369   0.224521   5.983 9.05e-07 ***
 fac.infseg3:dp1  0.683410   0.130106   5.253 8.07e-06 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.02325 on 34 degrees of freedom
 Multiple R-squared:  0.9237,	Adjusted R-squared:  0.9103 
@@ -622,8 +640,7 @@ Corresponding to breakdates:
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = dw ~ dp1 + du + u1, h = 5, breaks = 5, 
-    data = uk)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                       
@@ -642,10 +659,12 @@ m = 4   1958 1963      1972 1977
 m = 5   1958 1963 1969 1974 1979
 
 Fit:
-                                                                     
-m   0          1          2          3          4          5         
-RSS  3.409e-02  1.690e-02  1.062e-02  7.835e-03  5.183e-03  3.388e-03
-BIC -1.508e+02 -1.604e+02 -1.605e+02 -1.542e+02 -1.523e+02 -1.509e+02
+                                                                      
+m    0          1          2          3          4          5         
+RSS   3.409e-02  1.690e-02  1.062e-02  7.835e-03  5.183e-03  3.388e-03
+BIC  -1.508e+02 -1.604e+02 -1.605e+02 -1.542e+02 -1.523e+02 -1.509e+02
+LWZ  -1.460e+02 -1.509e+02 -1.463e+02 -1.353e+02 -1.286e+02 -1.225e+02
+R.sq  5.537e-01  7.787e-01  8.609e-01  8.974e-01  9.321e-01  9.556e-01
 > 
 > ## fit segmented model with three breaks
 > fac.pc <- breakfactor(bp.pc, breaks = 2, label = "seg")
@@ -670,7 +689,7 @@ fac.pcseg1:dp1  0.09373    0.24053   0.390  0.69936
 fac.pcseg2:dp1  1.23143    0.20498   6.008 1.06e-06 ***
 fac.pcseg3:dp1  0.01618    0.25667   0.063  0.95013    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.02021 on 32 degrees of freedom
 Multiple R-squared:  0.9655,	Adjusted R-squared:  0.9569 
@@ -736,7 +755,7 @@ Corresponding to breakdates:
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = RealInt ~ 1, h = 15)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                       
@@ -755,10 +774,12 @@ m = 4           1966(4) 1972(3) 1976(4) 1980(3)
 m = 5   1964(4) 1968(3) 1972(3) 1976(4) 1980(3)
 
 Fit:
-                                             
-m   0      1      2      3      4      5     
-RSS 1214.9  645.0  456.0  445.2  444.9  449.6
-BIC  555.7  499.8  473.3  480.1  489.3  499.7
+                                                                
+m    0         1         2         3         4         5        
+RSS  1.215e+03 6.450e+02 4.560e+02 4.452e+02 4.449e+02 4.496e+02
+BIC  5.557e+02 4.998e+02 4.733e+02 4.801e+02 4.893e+02 4.997e+02
+LWZ  5.614e+02 5.112e+02 4.905e+02 5.030e+02 5.179e+02 5.339e+02
+R.sq 9.902e-33 4.691e-01 6.247e-01 6.336e-01 6.338e-01 6.299e-01
 > 
 > ## fit segmented model with three breaks
 > fac.ri <- breakfactor(bp.ri, breaks = 3, label = "seg")
@@ -779,7 +800,7 @@ fac.riseg2   0.8661     0.4422   1.959    0.053 .
 fac.riseg3  -1.7961     0.3749  -4.791 5.83e-06 ***
 fac.riseg4   5.6429     0.4329  13.036  < 2e-16 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 2.121 on 99 degrees of freedom
 Multiple R-squared:  0.6842,	Adjusted R-squared:  0.6714 
@@ -933,7 +954,6 @@ Break detected at observation # 29
 > ###################################################
 > ### chunk number 1: data
 > ###################################################
-> library("strucchange")
 > data("USIncExp")
 > plot(USIncExp, plot.type = "single", col = 1:2, ylab = "billion US$")
 > legend(1960, max(USIncExp), c("income", "expenditures"),
@@ -943,7 +963,6 @@ Break detected at observation # 29
 > ###################################################
 > ### chunk number 2: subset
 > ###################################################
-> library("strucchange")
 > data("USIncExp")
 > USIncExp2 <- window(USIncExp, start = c(1985,12))
 > 
@@ -1098,7 +1117,7 @@ Initial call:
   mefp.formula(formula = ecm.model, type = "ME", data = USIncExp3,      alpha = 0.05) 
 
 Last call:
-  monitor(obj = me.mefp) 
+  monitor.matrix(obj = obj, X = X, y = y, verbose = verbose) 
 
 Significance level   :  0.05 
 Critical value       :  3.109524 
@@ -1255,7 +1274,7 @@ Break detected at observation # 183
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = Nile ~ 1)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                       
@@ -1274,10 +1293,12 @@ m = 4        1898 1915 1938 1953
 m = 5   1885 1900 1915 1938 1953
 
 Fit:
-                                                   
-m   0       1       2       3       4       5      
-RSS 2835157 1597457 1552924 1538097 1507888 1659994
-BIC    1318    1270    1276    1285    1292    1311
+                                                                
+m    0         1         2         3         4         5        
+RSS  2.835e+06 1.597e+06 1.553e+06 1.538e+06 1.508e+06 1.660e+06
+BIC  1.318e+03 1.270e+03 1.276e+03 1.285e+03 1.292e+03 1.311e+03
+LWZ  1.324e+03 1.281e+03 1.293e+03 1.307e+03 1.320e+03 1.344e+03
+R.sq 1.372e-30 4.366e-01 4.523e-01 4.575e-01 4.681e-01 4.145e-01
 > plot(bp.nile)
 > 
 > ## compute breakdates corresponding to the
@@ -1350,9 +1371,10 @@ Corresponding to breakdates:
 > 
 > ### Name: breakpoints
 > ### Title: Dating Breaks
-> ### Aliases: breakpoints breakpoints.formula breakpoints.breakpointsfull
-> ###   breakpoints.Fstats summary.breakpoints summary.breakpointsfull
-> ###   plot.breakpointsfull plot.summary.breakpointsfull print.breakpoints
+> ### Aliases: breakpoints breakpoints.formula breakpoints.matrix
+> ###   breakpoints.breakpointsfull breakpoints.Fstats summary.breakpoints
+> ###   summary.breakpointsfull plot.breakpointsfull
+> ###   plot.summary.breakpointsfull print.breakpoints
 > ###   print.summary.breakpointsfull lines.breakpoints coef.breakpointsfull
 > ###   vcov.breakpointsfull fitted.breakpointsfull residuals.breakpointsfull
 > ###   df.residual.breakpointsfull
@@ -1389,7 +1411,7 @@ Corresponding to breakdates:
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = Nile ~ 1)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                       
@@ -1408,12 +1430,14 @@ m = 4        1898 1915 1938 1953
 m = 5   1885 1900 1915 1938 1953
 
 Fit:
-                                                   
-m   0       1       2       3       4       5      
-RSS 2835157 1597457 1552924 1538097 1507888 1659994
-BIC    1318    1270    1276    1285    1292    1311
+                                                                
+m    0         1         2         3         4         5        
+RSS  2.835e+06 1.597e+06 1.553e+06 1.538e+06 1.508e+06 1.660e+06
+BIC  1.318e+03 1.270e+03 1.276e+03 1.285e+03 1.292e+03 1.311e+03
+LWZ  1.324e+03 1.281e+03 1.293e+03 1.307e+03 1.320e+03 1.344e+03
+R.sq 1.372e-30 4.366e-01 4.523e-01 4.575e-01 4.681e-01 4.145e-01
 > 
-> ## the BIC also chooses one breakpoint
+> ## the BIC and LWZ also choose one breakpoint
 > plot(bp.nile)
 > breakpoints(bp.nile)
 
@@ -1421,6 +1445,18 @@ BIC    1318    1270    1276    1285    1292    1311
 
 Call:
 breakpoints.breakpointsfull(obj = bp.nile)
+
+Breakpoints at observation number:
+28 
+
+Corresponding to breakdates:
+1898 
+> breakpoints(bp.nile, breaks = "LWZ")
+
+	 Optimal 2-segment partition: 
+
+Call:
+breakpoints.breakpointsfull(obj = bp.nile, breaks = "LWZ")
 
 Breakpoints at observation number:
 28 
@@ -1479,7 +1515,7 @@ Corresponding to breakdates:
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = y ~ ylag1 + ylag12, h = 0.1, data = seatbelt)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                                    
@@ -1504,14 +1540,18 @@ m = 7           1973(10) 1975(10) 1977(5) 1978(11) 1980(5)  1981(12) 1983(6)
 m = 8   1971(6) 1973(10) 1975(10) 1977(5) 1978(11) 1980(5)  1981(12) 1983(6)
 
 Fit:
-                                                                         
-m   0         1         2         3         4         5         6        
-RSS    0.3297    0.2967    0.2676    0.2438    0.2395    0.2317    0.2258
-BIC -602.8611 -601.0539 -598.9042 -594.8774 -577.2905 -562.4880 -546.3632
-                       
-m   7         8        
-RSS    0.2244    0.2231
-BIC -526.7295 -506.9886
+                                                                          
+m    0         1         2         3         4         5         6        
+RSS     0.3297    0.2967    0.2676    0.2438    0.2395    0.2317    0.2258
+BIC  -602.8611 -601.0539 -598.9042 -594.8774 -577.2905 -562.4880 -546.3632
+LWZ  -585.6050 -566.5418 -547.1360 -525.8532 -491.0102 -458.9517 -425.5708
+R.sq    0.6766    0.7090    0.7376    0.7609    0.7651    0.7727    0.7785
+                        
+m    7         8        
+RSS     0.2244    0.2231
+BIC  -526.7295 -506.9886
+LWZ  -388.6811 -351.6842
+R.sq    0.7799    0.7812
 > lines(bp.seat, breaks = 2)
 > 
 > ## minimum BIC partition
@@ -1678,10 +1718,6 @@ f(efp) = 3.001, p-value = 0.01498
 > fs <- Fstats(durab.model, data = durab, from = 0.1)
 > plot(fs)
 > 
-> ## F statistics based on heteroskadisticy-consistent covariance matrix
-> fsHC <- Fstats(durab.model, data = durab, from = 0.1,
-+ 	       vcov = function(x, ...) vcovHC(x, type = "HC", ...))
-> plot(fsHC)
 > 
 > ## monitoring
 > Durab <- window(durab, start=1964, end = c(1979, 12))
@@ -1701,44 +1737,6 @@ Break detected at observation # 416
 > ## interpolation between the values for T = 2 and T = 3 at
 > ## alpha = 0.05. A typo switched 1.732 to 1.723.
 > 
-> ## dating
-> bp <- breakpoints(durab.model, data = durab)
-> summary(bp)
-
-	 Optimal (m+1)-segment partition: 
-
-Call:
-breakpoints.formula(formula = durab.model, data = durab)
-
-Breakpoints at observation number:
-                           
-m = 1               418    
-m = 2       221         530
-m = 3   114 225         530
-m = 4   114 221     418 531
-m = 5   114 221 319 418 531
-
-Corresponding to breakdates:
-                                                 
-m = 1                            1981(12)        
-m = 2           1965(7)                   1991(4)
-m = 3   1956(8) 1965(11)                  1991(4)
-m = 4   1956(8) 1965(7)          1981(12) 1991(5)
-m = 5   1956(8) 1965(7)  1973(9) 1981(12) 1991(5)
-
-Fit:
-                                                                     
-m   0          1          2          3          4          5         
-RSS  5.586e-02  5.431e-02  5.325e-02  5.220e-02  5.171e-02  5.157e-02
-BIC -4.221e+03 -4.220e+03 -4.213e+03 -4.207e+03 -4.194e+03 -4.176e+03
-> plot(summary(bp))
-> 
-> plot(ols)
-> lines(breakpoints(bp, breaks = 1), col = 3)
-> lines(breakpoints(bp, breaks = 2), col = 4)
-> plot(fs)
-> lines(breakpoints(bp, breaks = 1), col = 3)
-> lines(breakpoints(bp, breaks = 2), col = 4)
 > 
 > 
 > 
@@ -1750,7 +1748,7 @@ BIC -4.221e+03 -4.220e+03 -4.213e+03 -4.207e+03 -4.194e+03 -4.176e+03
 > 
 > ### Name: efp
 > ### Title: Empirical Fluctuation Processes
-> ### Aliases: efp print.efp
+> ### Aliases: efp efp.formula efp.matrix print.efp
 > ### Keywords: regression
 > 
 > ### ** Examples
@@ -1947,6 +1945,7 @@ f(efp) = 1.669, p-value = 0.007613
 > ### Name: logLik.breakpoints
 > ### Title: Log Likelihood and Information Criteria for Breakpoints
 > ### Aliases: logLik.breakpoints logLik.breakpointsfull AIC.breakpointsfull
+> ###   LWZ LWZ.breakpointsfull LWZ.breakpoints
 > ### Keywords: regression
 > 
 > ### ** Examples
@@ -1962,7 +1961,7 @@ f(efp) = 1.669, p-value = 0.007613
 	 Optimal (m+1)-segment partition: 
 
 Call:
-breakpoints.formula(formula = Nile ~ 1)
+breakpoints.matrix(obj = X, y = y, h = h, breaks = breaks, hpc = hpc)
 
 Breakpoints at observation number:
                       
@@ -1981,25 +1980,75 @@ m = 4        1898 1915 1938 1953
 m = 5   1885 1900 1915 1938 1953
 
 Fit:
-                                                   
-m   0       1       2       3       4       5      
-RSS 2835157 1597457 1552924 1538097 1507888 1659994
-BIC    1318    1270    1276    1285    1292    1311
+                                                                
+m    0         1         2         3         4         5        
+RSS  2.835e+06 1.597e+06 1.553e+06 1.538e+06 1.508e+06 1.660e+06
+BIC  1.318e+03 1.270e+03 1.276e+03 1.285e+03 1.292e+03 1.311e+03
+LWZ  1.324e+03 1.281e+03 1.293e+03 1.307e+03 1.320e+03 1.344e+03
+R.sq 1.372e-30 4.366e-01 4.523e-01 4.575e-01 4.681e-01 4.145e-01
 > plot(bp.nile)
 > 
-> ## BIC of partitions with0 to 5 breakpoints
+> ## BIC of partitions with 0 to 5 breakpoints
 > plot(0:5, AIC(bp.nile, k = log(bp.nile$nobs)), type = "b")
 > ## AIC
 > plot(0:5, AIC(bp.nile), type = "b")
+> ## LWZ
+> plot(0:5, LWZ(bp.nile), type = "b")
 > 
-> ## BIC, AIC, log likelihood of a single partition
+> ## BIC, AIC, LWZ, log likelihood of a single partition
 > bp.nile1 <- breakpoints(bp.nile, breaks = 1)
 > AIC(bp.nile1, k = log(bp.nile1$nobs))
 [1] 1270.084
 > AIC(bp.nile1)
 [1] 1259.663
+> LWZ(bp.nile1)
+[1] 1281.212
 > logLik(bp.nile1)
 'log Lik.' -625.8315 (df=4)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("magnitude")
+> ### * magnitude
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: magnitude
+> ### Title: Magnitudes of Breakpoints
+> ### Aliases: magnitude magnitude.breakpointsfull
+> ### Keywords: regression
+> 
+> ### ** Examples
+> 
+> data(Nile)
+> 
+> trend <- 1:length(Nile)
+> bp.nile <- breakpoints(Nile ~ trend)
+> 
+> # The trend component is default, set "component" to the
+> # name of your coviariate(s), if it is different.
+> magnitude(bp.nile)
+$Mag
+       before    after      diff     RMSD      MAD        MD
+[1,] 1113.404 825.4608 -287.9431 288.6476 288.6336 -288.6336
+
+$m.x
+[1] 28 28
+
+$m.y
+   before     after 
+1113.4039  825.4608 
+
+$Magnitude
+     diff 
+-287.9431 
+
+$Time
+[1] 28
+
+attr(,"class")
+[1] "magnitude"
 > 
 > 
 > 
@@ -2011,7 +2060,8 @@ BIC    1318    1270    1276    1285    1292    1311
 > 
 > ### Name: mefp
 > ### Title: Monitoring of Empirical Fluctuation Processes
-> ### Aliases: mefp mefp.formula mefp.efp print.mefp monitor
+> ### Aliases: mefp mefp.formula mefp.matrix mefp.efp print.mefp monitor
+> ###   monitor.matrix
 > ### Keywords: regression
 > 
 > ### ** Examples
@@ -2218,6 +2268,38 @@ Break detected at observation # 183
 > 
 > 
 > cleanEx()
+> nameEx("root.matrix.crossprod")
+> ### * root.matrix.crossprod
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: root.matrix.crossprod
+> ### Title: Root of X^TX
+> ### Aliases: root.matrix.crossprod
+> ### Keywords: algebra
+> 
+> ### ** Examples
+> 
+> set.seed(1)
+> n <- 100
+> p <- 3
+> X <- matrix(rnorm(n*p),nrow=n, ncol=p)
+> test <- root.matrix.crossprod(X)
+> ## control results
+> t(X) %*% X
+           [,1]       [,2]       [,3]
+[1,] 81.0550927 -0.4963746   2.013693
+[2,] -0.4963746 90.9786439  -4.970673
+[3,]  2.0136928 -4.9706733 105.988859
+> test %*% test
+           [,1]       [,2]       [,3]
+[1,] 81.0550927 -0.4963746   2.013693
+[2,] -0.4963746 90.9786439  -4.970673
+[3,]  2.0136928 -4.9706733 105.988859
+> 
+> 
+> 
+> cleanEx()
 > nameEx("scPublications")
 > ### * scPublications
 > 
@@ -2407,7 +2489,7 @@ Model 2: Employed ~ fac/(Year + GNP.deflator + GNP + Armed.Forces)
 1     11 4.8987                              
 2      6 1.1466  5    3.7521 3.9268 0.06307 .
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > 
 > ## estimates from Table 7.5 in Greene (1993)
 > summary(fm0)
@@ -2428,7 +2510,7 @@ GNP.deflator -1.977e-02  1.389e-01  -0.142  0.88940
 GNP           6.439e-02  1.995e-02   3.227  0.00805 **
 Armed.Forces -1.015e-04  3.086e-03  -0.033  0.97436   
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.6673 on 11 degrees of freedom
 Multiple R-squared:  0.9735,	Adjusted R-squared:  0.9639 
@@ -2457,7 +2539,7 @@ fac2:GNP           1.123e-01  2.269e-02   4.951  0.00258 **
 fac1:Armed.Forces -2.467e-03  6.965e-03  -0.354  0.73532   
 fac2:Armed.Forces -2.579e-02  1.259e-02  -2.049  0.08635 . 
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 0.4372 on 6 degrees of freedom
 Multiple R-squared:  0.9938,	Adjusted R-squared:  0.9845 
@@ -2529,9 +2611,10 @@ F-statistic: 106.9 on 9 and 6 DF,  p-value: 6.28e-06
 > 
 > ### * <FOOTER>
 > ###
+> cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  43.26 0.124 43.969 0 0 
+Time elapsed:  1.96 0.034 1.995 0 0 
 > grDevices::dev.off()
 null device 
           1 

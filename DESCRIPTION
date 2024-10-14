@@ -1,5 +1,5 @@
 Package: strucchangeRcpp
-Version: 1.5-3-1.0.4.9999
+Version: 1.5-4-1.0.0
 Title: Testing, Monitoring, and Dating Structural Changes: C++ Version
 Authors@R: c(person(given = "Dainius", family = "Masiliunas", role = c("aut", "cre"),
              email = "pastas4@gmail.com", comment = c(ORCID = "0000-0001-5654-1277")),
@@ -12,7 +12,8 @@ Authors@R: c(person(given = "Dainius", family = "Masiliunas", role = c("aut", "c
              person(given = "Andrei", family = "Mirt", role = "ctb", email = "andrei.mirt@wur.nl",
                     comment = c(ORCID = "0000-0003-3654-2090")),
              person(given = "Bruce", family = "Hansen", role = "ctb"),
-             person(given = c("Edgar", "C."), family = "Merkle", role = "ctb"))
+             person(given = c("Edgar", "C."), family = "Merkle", role = "ctb"),
+             person(given = "Nikolaus", family = "Umlauf", role = "ctb"))
 Description: A fast implementation with additional experimental features for
              testing, monitoring and dating structural changes in (linear)
              regression models. 'strucchangeRcpp' features tests/methods from
@@ -51,3 +52,4 @@ License: GPL-2 | GPL-3
 URL: https://github.com/bfast2/strucchangeRcpp/
 BugReports: https://github.com/bfast2/strucchangeRcpp/issues
 RoxygenNote: 7.1.1
+Encoding: UTF-8

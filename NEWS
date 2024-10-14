@@ -1,4 +1,6 @@
-Changes in Version 1.5-3-1.0.5
+Changes in Version 1.5-4-1.0.0
+
+  o Synchronised code with upstream strucchange.
 
   o Fix for the 'breaks' option not being fully honoured in breakpoints() if
   the option is numeric.
