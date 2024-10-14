@@ -21,22 +21,6 @@ recresid.lm <- function(x, data = list(), ...)
     return(rr)
 }
 
-
-## convenience function to replace NAs with 0s in coefs
-.coef0 <- function(obj) {
-  cf <- obj$coefficients
-  ifelse(is.na(cf), 0, cf)
-}
-.Xinv0 <- function(obj) {
-  qr <- obj$qr
-  k = length(obj$coefficients)
-  rval <- matrix(0, ncol = k, nrow = k)
-  wi <- qr$pivot[1:qr$rank]
-  rval[wi,wi] <- chol2inv(qr$qr[1:qr$rank, 1:qr$rank, drop = FALSE])
-  rval
-}
-
-
 recresid.default <- function(x, y, start = ncol(x) + 1, end = nrow(x),
   tol = sqrt(.Machine$double.eps)/ncol(x), qr.tol = 1e-7, ...)
 {
@@ -45,6 +29,20 @@ recresid.default <- function(x, y, start = ncol(x) + 1, end = nrow(x),
   stopifnot(end >= start & end <= nrow(x))
   if (getOption("strucchange.use_armadillo", FALSE))
     return(.sc_cpp_recresid(x,y,start,end,tol, getOption("strucchange.armadillo_rcond_min",sqrt(.Machine$double.eps))))
+  
+  ## convenience function to replace NAs with 0s in coefs
+  .coef0 <- function(obj) {
+    cf <- obj$coefficients
+    ifelse(is.na(cf), 0, cf)
+  }
+  .Xinv0 <- function(obj) {
+    qr <- obj$qr
+    k = length(obj$coefficients)
+    rval <- matrix(0, ncol = k, nrow = k)
+    wi <- qr$pivot[1:qr$rank]
+    rval[wi,wi] <- chol2inv(qr$qr[1:qr$rank, 1:qr$rank, drop = FALSE])
+    rval
+  }
   
   n <- end
   q <- start - 1
