@@ -41,7 +41,8 @@ arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned
   arma::colvec cur_coef_full;
   
   Environment env_stats("package:stats");
-  Environment env_sc("package:strucchangeRcpp");
+  Function asNamespace("asNamespace");
+  Environment env_sc = asNamespace("strucchangeRcpp");
   Function fXinv0 =  env_sc[".Xinv0"];
   Function fcoef0 =  env_sc[".coef0"];
   Function lmfit = env_stats["lm.fit"];

@@ -44,8 +44,6 @@ export(
   "LWZ",
 
 ## utilities
-  ".Xinv0",
-  ".coef0",
   "recresid.default",
   "simulateBMDist",
   "root.matrix",
