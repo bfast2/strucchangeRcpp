@@ -3,7 +3,6 @@
 \alias{historyM1}
 \alias{monitorM1}
 \docType{data}
-\encoding{latin1}
 \title{German M1 Money Demand}
 \usage{data("GermanM1")}
 \description{

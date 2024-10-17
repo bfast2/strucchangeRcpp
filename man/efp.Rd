@@ -3,7 +3,6 @@
 \alias{efp.formula}
 \alias{efp.matrix}
 \alias{print.efp}
-\encoding{latin1}
 \title{Empirical Fluctuation Processes}
 \description{Computes an empirical fluctuation process according
 to a specified method from the generalized fluctuation test

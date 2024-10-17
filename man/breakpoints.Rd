@@ -16,7 +16,6 @@
 \alias{fitted.breakpointsfull}
 \alias{residuals.breakpointsfull}
 \alias{df.residual.breakpointsfull}
-\encoding{latin1}
 \title{Dating Breaks}
 
 \description{
