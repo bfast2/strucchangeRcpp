@@ -80,7 +80,7 @@ arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned
         if (1/arma::cond(cur_X) >= rcond_min) {
           arma::solve(cur_coef_full, cur_X, cur_y, arma::solve_opts::no_approx);
           arma::inv_sympd(X1, trans(cur_X) * cur_X);
-          bool nona = arma::is_finite( cur_coef) && arma::is_finite( cur_coef_full );
+          bool nona = cur_coef.is_finite() && cur_coef_full.is_finite();
           if(nona && approx_equal(cur_coef_full,cur_coef, "absdiff", tol)) {
             check = false;
           } 
@@ -90,7 +90,7 @@ arma::vec sc_cpp_recresid_arma(const arma::mat& X, const arma::vec& y,  unsigned
           NumericMatrix qrinv = fXinv0(fitted);
           X1 =  as<arma::mat>(qrinv);
           arma::colvec coef1 = as<arma::colvec>(fitted["coefficients"]);
-          bool nona = arma::is_finite( coef1 ) && arma::is_finite( cur_coef_full );
+          bool nona = coef1.is_finite() && cur_coef_full.is_finite();
           if(nona && approx_equal(coef1,cur_coef, "absdiff", tol)) {
             check = false;
           } 
