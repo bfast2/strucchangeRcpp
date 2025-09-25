@@ -1,3 +1,8 @@
+Changes in Version 1.5-4-1.0.1
+
+  o Switch from deprecated arma::is_finite to member .is_finite (thanks to
+  eddelbuettel).
+
 Changes in Version 1.5-4-1.0.0
 
   o Synchronised code with upstream strucchange.
