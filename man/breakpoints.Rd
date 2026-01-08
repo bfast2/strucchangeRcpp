@@ -53,7 +53,8 @@
     or a string specifying the information criterion to use to automatically determine
     the optimal number of breaks (see also \code{\link{logLik}}).
     \code{"all"} means the maximal number allowed by \code{h} is used.
-    \code{NULL} is treated as the default of the \code{breakpoints} function (i.e. BIC).}
+    In \code{breakpoints.breakpointsfull}, \code{NULL} extracts the optimal number of
+    breaks as determined by the initial \code{breakpoints} call.}
   \item{data}{an optional data frame containing the variables in the model. By
      default the variables are taken from the environment which \code{breakpoints} is
      called from.}
@@ -137,7 +138,8 @@
   series properties and the associated RSS) but not the triangular RSS
   matrix and related extractor functions. The set of breakpoints which
   is associated by default with a \code{"breakpointsfull"} object is
-  the minimum BIC partition.
+  the partition determined by the information criterion defined by the
+  \code{breaks} argument.
 
   Breakpoints are the number of observations that are the last in one
   segment, it is also possible to compute the corresponding \code{breakdates}
