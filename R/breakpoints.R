@@ -604,7 +604,7 @@ confint.breakpointsfull <- function(object, parm = NULL, level = 0.95, breaks = 
       else phi2 <- sqrt(sigma2)
  
     p0 <- pargmaxV(0, phi1 = phi1, phi2 = phi2, xi = xi)
-    if(is.nan(p0) || p0 < a2 || p0 > (1-a2)) {
+    if(!is.finite(p0) || p0 < a2 || p0 > (1-a2)) {
       warning(paste("Confidence interval", as.integer(i-1),
         "cannot be computed: P(argmax V <= 0) =", round(p0, digits = 4)))
       upper[i-1] <- NA
