@@ -63,22 +63,22 @@ breakpoints.matrix <- function(obj, y, h = 0.15, breaks = c("BIC", "LWZ", "RSS",
   {
     breakstat <- match.arg(breaks)
     breaks <- ceiling(n/h) - 2
-  } else {
-    if (length(breaks) > 1)
-      stop("Argument 'breaks' takes a single number or method for optimal break estimation")
-    if (breaks %% 1 != 0)
-      stop("Please enter an integer number of breaks")
-    if(breaks < 1) {
-      breaks <- 1
-      warning("number of breaks must be at least 1")
-    }
-      
-    if(breaks > ceiling(n/h) - 2) {
-      breaks0 <- breaks
-      breaks <- ceiling(n/h) - 2
-      warning(sprintf("requested number of breaks = %i too large, changed to %i", breaks0, breaks))
-    }
   }
+  if (length(breaks) > 1)
+    stop("Argument 'breaks' takes a single value (number or method for optimal break estimation)")
+  if (breaks %% 1 != 0)
+    stop("Argument 'breaks' must evaluate to an integer number")
+  if(breaks < 1) {
+    breaks <- 1
+    warning("Number of breaks must be at least 1, changed to 1")
+  }
+    
+  if(breaks > ceiling(n/h) - 2) {
+    breaks0 <- breaks
+    breaks <- ceiling(n/h) - 2
+    warning(sprintf("requested number of breaks = %i too large, changed to %i", breaks0, breaks))
+  }
+  
 
   hpc <- match.arg(hpc)
   if(hpc == "foreach") {

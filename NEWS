@@ -1,3 +1,8 @@
+Changes in Version 1.5-4-1.0.3
+
+  o Fix an edge-case in breakpoints.matrix() that resulted in an unhelpful error
+  when h = 0.5, and improve the error and warning messages in the function.
+
 Changes in Version 1.5-4-1.0.2
 
   o Fix issue where breakpoints.breakpointsfull(breaks=NULL) would return
